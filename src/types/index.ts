@@ -10,11 +10,21 @@ export interface Task {
   contact: Contact | null;
 }
 
+export interface Milestones {
+  filming?: string;
+  questionnaire?: string;
+  salesPage?: string;
+  launch?: string;
+  bulkArrival?: string;
+  shipping?: string;
+}
+
 export interface Project {
   id: string;
   name: string;
   tasks: Task[];
   nextWeekPlan: string;
+  milestones?: Milestones;
 }
 
 export interface ReportData {

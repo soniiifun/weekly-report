@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Printer, Save, CheckCircle2, Bot, LayoutDashboard, Table, ArrowRightCircle, Users } from 'lucide-react';
-import { ReportData, Project, Task } from '../types';
+import { ReportData, Project, Task, Milestones } from '../types';
 
 const defaultData: ReportData = {
   employeeName: '',
@@ -192,6 +192,19 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
     }));
   };
 
+  const updateMilestone = (projectId: string, field: keyof Milestones, value: string) => {
+    setData(prev => ({
+      ...prev,
+      projects: prev.projects.map(p => {
+        if (p.id === projectId) {
+          const currentMilestones = p.milestones || {};
+          return { ...p, milestones: { ...currentMilestones, [field]: value } };
+        }
+        return p;
+      })
+    }));
+  };
+
   const addTask = (projectId: string) => {
     const newTask: Task = { id: Date.now().toString() + Math.random().toString(), description: '', hasContact: false, contact: { person: '', progress: '' } };
     setData(prev => ({
@@ -320,6 +333,36 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               <div style={{ marginBottom: '1.5rem', width: '90%' }}>
                 <label>專案名稱</label>
                 <input className="input-field" value={project.name} onChange={e => updateProject(project.id, 'name', e.target.value)} placeholder="如：公司官網改版專案" />
+              </div>
+              
+              <div style={{ marginBottom: '1.5rem', width: '95%', backgroundColor: '#EFF6FF', padding: '1rem', borderRadius: '0.5rem', borderLeft: '3px solid #3B82F6' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#1E3A8A', marginBottom: '0.8rem', display: 'block' }}>重要時程</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>預計拍片</label>
+                    <input className="input-field" value={project.milestones?.filming || ''} onChange={e => updateMilestone(project.id, 'filming', e.target.value)} placeholder="如：8/15" />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>問卷</label>
+                    <input className="input-field" value={project.milestones?.questionnaire || ''} onChange={e => updateMilestone(project.id, 'questionnaire', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>銷售頁</label>
+                    <input className="input-field" value={project.milestones?.salesPage || ''} onChange={e => updateMilestone(project.id, 'salesPage', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>上線</label>
+                    <input className="input-field" value={project.milestones?.launch || ''} onChange={e => updateMilestone(project.id, 'launch', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>大貨</label>
+                    <input className="input-field" value={project.milestones?.bulkArrival || ''} onChange={e => updateMilestone(project.id, 'bulkArrival', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>出貨給客人</label>
+                    <input className="input-field" value={project.milestones?.shipping || ''} onChange={e => updateMilestone(project.id, 'shipping', e.target.value)} />
+                  </div>
+                </div>
               </div>
 
               <div style={{ marginBottom: '1rem' }}>
@@ -565,27 +608,27 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                 }
               });
 
-              return slidesData.map((slideData, idx) => (
+              const slidesElements = slidesData.map((slideData, idx) => (
                 <div key={`${slideData.project.id}-${slideData.part}`} className="slide">
-                  <div className="slide-page-num">{idx + 1} / {slidesData.length}</div>
+                  <div className="slide-page-num">{idx + 1} / {slidesData.length + 1}</div>
                   <div className="slide-watermark">Weekly Report</div>
                   
                   <div className="slide-header">
                     <h2 className="slide-title">
-                      {slideData.project.name || '未命名專案'}
-                      {slideData.totalParts > 1 && <span style={{ fontSize: '2.5cqi', color: '#60A5FA', marginLeft: '1cqi' }}>(Part {slideData.part}/{slideData.totalParts})</span>}
+                      {slideData.project.name}
+                      {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: '1cqi' }}>(Part {slideData.part})</span>}
                     </h2>
                     <div className="slide-meta">
-
-                      <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>{data.dateRange}</div>
+                      {data.employeeName} | {data.department}
                     </div>
                   </div>
-
+                  
                   <div className="slide-content">
-                    {/* Left Column: This Week Tasks */}
+                    
                     <div className="slide-col">
                       <div className="slide-col-title">
-                        <CheckCircle2 /> 本週執行項目
+                        <CheckCircle2 size={16} />
+                        <span>本週工作</span>
                       </div>
                       <div className="slide-tasks-container">
                         {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi' }}>無具體項目</p>}
@@ -613,6 +656,45 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     </div>
                 </div>
               ));
+              
+              const timelineSlide = (
+                <div key="timeline-overview" className="slide">
+                  <div className="slide-page-num">{slidesData.length + 1} / {slidesData.length + 1}</div>
+                  <div className="slide-watermark">Weekly Report</div>
+                  <div className="slide-header">
+                    <h2 className="slide-title">
+                      <LayoutDashboard style={{ display: 'inline', marginRight: '1cqi', verticalAlign: '-0.15em' }}/>
+                      專案時程總覽
+                    </h2>
+                  </div>
+                  <div className="slide-content" style={{ display: 'flex', flexDirection: 'column', gap: '1cqi', height: '100%' }}>
+                    <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '1cqi', marginBottom: '1cqi' }}>
+                      <div style={{ width: '20%', fontWeight: 'bold', color: '#9CA3AF', fontSize: '2cqi' }}>專案名稱</div>
+                      <div style={{ width: '13%', textAlign: 'center', color: '#9CA3AF', fontSize: '1.8cqi' }}>預計拍片</div>
+                      <div style={{ width: '13%', textAlign: 'center', color: '#9CA3AF', fontSize: '1.8cqi' }}>問卷</div>
+                      <div style={{ width: '13%', textAlign: 'center', color: '#9CA3AF', fontSize: '1.8cqi' }}>銷售頁</div>
+                      <div style={{ width: '13%', textAlign: 'center', color: '#9CA3AF', fontSize: '1.8cqi' }}>上線</div>
+                      <div style={{ width: '14%', textAlign: 'center', color: '#9CA3AF', fontSize: '1.8cqi' }}>大貨</div>
+                      <div style={{ width: '14%', textAlign: 'center', color: '#9CA3AF', fontSize: '1.8cqi' }}>出貨給客人</div>
+                    </div>
+                    <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1cqi', paddingRight: '1cqi' }}>
+                      {data.projects.filter(p => p.name.trim() !== '').map(p => (
+                        <div key={`tl-${p.id}`} style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.05)', padding: '1cqi', borderRadius: '1cqi', borderLeft: '0.4cqi solid #3B82F6' }}>
+                          <div style={{ width: '20%', fontWeight: 'bold', color: '#60A5FA', fontSize: '2cqi', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '1cqi' }}>{p.name}</div>
+                          <div style={{ width: '13%', textAlign: 'center', color: '#F3F4F6', fontSize: '1.8cqi' }}>{p.milestones?.filming || '-'}</div>
+                          <div style={{ width: '13%', textAlign: 'center', color: '#F3F4F6', fontSize: '1.8cqi' }}>{p.milestones?.questionnaire || '-'}</div>
+                          <div style={{ width: '13%', textAlign: 'center', color: '#F3F4F6', fontSize: '1.8cqi' }}>{p.milestones?.salesPage || '-'}</div>
+                          <div style={{ width: '13%', textAlign: 'center', color: '#F3F4F6', fontSize: '1.8cqi' }}>{p.milestones?.launch || '-'}</div>
+                          <div style={{ width: '14%', textAlign: 'center', color: '#F3F4F6', fontSize: '1.8cqi' }}>{p.milestones?.bulkArrival || '-'}</div>
+                          <div style={{ width: '14%', textAlign: 'center', color: '#F3F4F6', fontSize: '1.8cqi' }}>{p.milestones?.shipping || '-'}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+
+              return [...slidesElements, timelineSlide];
             })()}
           </div>
         )}
