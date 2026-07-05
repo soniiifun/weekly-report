@@ -218,7 +218,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               if (t.id === taskId) {
                 if (field.startsWith('contact.')) {
                   const contactField = field.split('.')[1];
-                  return { ...t, contact: { ...t.contact, [contactField]: value } };
+                  const currentContact = t.contact || { person: '', progress: '' };
+                  return { ...t, contact: { ...currentContact, [contactField]: value } };
                 }
                 return { ...t, [field]: value };
               }
