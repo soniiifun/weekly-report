@@ -129,7 +129,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
   const handleImportFromLINE = async () => {
     try {
       setSaveStatus('正在從 LINE 同步任務...');
-      const res = await fetch('http://localhost:3001/api/tasks');
+      const res = await fetch('https://personal-secretary-bot-banx.onrender.com/api/tasks');
       const result = await res.json();
       if (result.success && result.data) {
         const lineTasks = result.data;
