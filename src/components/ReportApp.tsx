@@ -679,112 +679,125 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                 </div>
               ));
               
-              // Timeline Calculation
-              const validProjects = data.projects.filter(p => p.name.trim() !== '');
-              let minDay = 366, maxDay = 0;
-              validProjects.forEach(p => {
-                if (!p.milestones) return;
-                Object.values(p.milestones).forEach(val => {
-                  if (!val) return;
-                  const d = getDayOfYear(val);
-                  if (d !== null) {
-                    if (d < minDay) minDay = d;
-                    if (d > maxDay) maxDay = d;
+              // Monthly Timeline Calculation
+              interface MilestoneEntry {
+                projectId: string;
+                projectName: string;
+                milestoneName: string;
+                month: number;
+                day: number;
+                originalDate: string;
+              }
+
+              const allMilestones: MilestoneEntry[] = [];
+              data.projects.forEach(p => {
+                if (p.name.trim() === '' || !p.milestones) return;
+                const mappings = [
+                  { key: 'filming', label: '拍片' },
+                  { key: 'questionnaire', label: '問卷' },
+                  { key: 'salesPage', label: '銷售頁' },
+                  { key: 'launch', label: '上線' },
+                  { key: 'bulkArrival', label: '大貨' },
+                  { key: 'shipping', label: '出貨' }
+                ];
+                mappings.forEach(m => {
+                  const val = (p.milestones as any)[m.key];
+                  if (val) {
+                    const parts = val.split('/');
+                    if (parts.length >= 2) {
+                      const month = parseInt(parts[0]);
+                      const day = parseInt(parts[1]);
+                      if (!isNaN(month) && !isNaN(day)) {
+                        allMilestones.push({
+                          projectId: p.id,
+                          projectName: p.name,
+                          milestoneName: m.label,
+                          month,
+                          day,
+                          originalDate: val
+                        });
+                      }
+                    }
                   }
                 });
               });
-              if (minDay > maxDay) { minDay = 1; maxDay = 365; } 
-              else { minDay = Math.max(1, minDay - 10); maxDay = Math.min(365, maxDay + 10); }
-              const range = Math.max(1, maxDay - minDay);
 
-              const getPercentX = (dateStr: string | undefined) => {
-                if (!dateStr) return null;
-                const d = getDayOfYear(dateStr);
-                if (d === null) return null;
-                return ((d - minDay) / range) * 100;
-              };
+              const milestonesByMonth: Record<number, MilestoneEntry[]> = {};
+              allMilestones.forEach(m => {
+                if (!milestonesByMonth[m.month]) milestonesByMonth[m.month] = [];
+                milestonesByMonth[m.month].push(m);
+              });
 
               const colors = ['#60A5FA', '#34D399', '#FBBF24', '#F87171', '#A78BFA', '#F472B6', '#38BDF8', '#4ADE80'];
               
-              const axisMarkers = [];
-              for (let i = 0; i <= 4; i++) {
-                const day = minDay + (range * i) / 4;
-                axisMarkers.push({ percent: i * 25, label: formatDayToDate(day) });
-              }
-
-              const timelineSlide = (
-                <div key="timeline-overview" className="slide">
-                  <div className="slide-page-num">{slidesData.length + 1} / {slidesData.length + 1}</div>
-                  <div className="slide-watermark">Weekly Report</div>
-                  <div className="slide-header">
-                    <h2 className="slide-title">
-                      <LayoutDashboard style={{ display: 'inline', marginRight: '1cqi', verticalAlign: '-0.15em' }}/>
-                      專案時程甘特圖
-                    </h2>
-                  </div>
-                  <div className="slide-content" style={{ display: 'flex', flexDirection: 'column', gap: '1cqi', height: '100%', position: 'relative', marginTop: '2cqi' }}>
-                    
-                    {/* Timeline Axis */}
-                    <div style={{ position: 'relative', height: '3cqi', borderBottom: '2px solid rgba(255,255,255,0.2)', marginBottom: '2cqi', marginLeft: '15cqi' }}>
-                      {axisMarkers.map((m, i) => (
-                        <div key={i} style={{ position: 'absolute', left: `${m.percent}%`, transform: 'translateX(-50%)', color: '#9CA3AF', fontSize: '1.8cqi' }}>
-                          <div style={{ position: 'absolute', bottom: '-0.5cqi', left: '50%', width: '2px', height: '1cqi', backgroundColor: 'rgba(255,255,255,0.2)' }}></div>
-                          {m.label}
-                        </div>
-                      ))}
+              const monthSlides = Object.keys(milestonesByMonth).map(Number).sort((a,b) => a - b).map((month, mIdx) => {
+                const entries = milestonesByMonth[month];
+                entries.sort((a,b) => a.day - b.day);
+                
+                return (
+                  <div key={`month-${month}`} className="slide">
+                    <div className="slide-page-num">{slidesData.length + 1 + mIdx} / {slidesData.length + Object.keys(milestonesByMonth).length}</div>
+                    <div className="slide-watermark">Weekly Report</div>
+                    <div className="slide-header">
+                      <h2 className="slide-title">
+                        <LayoutDashboard style={{ display: 'inline', marginRight: '1cqi', verticalAlign: '-0.15em' }}/>
+                        {month}月 專案時程
+                      </h2>
                     </div>
-
-                    <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '2.5cqi', paddingRight: '1cqi' }}>
-                      {validProjects.map((p, pIdx) => {
-                        const color = colors[pIdx % colors.length];
-                        const milestones = [
-                          { label: '拍片', date: p.milestones?.filming, percent: getPercentX(p.milestones?.filming) },
-                          { label: '問卷', date: p.milestones?.questionnaire, percent: getPercentX(p.milestones?.questionnaire) },
-                          { label: '銷售頁', date: p.milestones?.salesPage, percent: getPercentX(p.milestones?.salesPage) },
-                          { label: '上線', date: p.milestones?.launch, percent: getPercentX(p.milestones?.launch) },
-                          { label: '大貨', date: p.milestones?.bulkArrival, percent: getPercentX(p.milestones?.bulkArrival) },
-                          { label: '出貨', date: p.milestones?.shipping, percent: getPercentX(p.milestones?.shipping) },
-                        ].filter(m => m.percent !== null);
-
-                        return (
-                          <div key={`tl-${p.id}`} style={{ display: 'flex', alignItems: 'center', position: 'relative' }}>
-                            <div style={{ width: '15%', fontWeight: 'bold', color: color, fontSize: '2cqi', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '1cqi' }}>
-                              {p.name}
-                            </div>
-                            
-                            <div style={{ position: 'relative', flex: 1, height: '4cqi', background: 'rgba(255,255,255,0.03)', borderRadius: '2cqi' }}>
-                              {/* Horizontal Line connecting points */}
-                              {milestones.length > 1 && (
-                                <div style={{ 
-                                  position: 'absolute', 
-                                  top: '50%', 
-                                  transform: 'translateY(-50%)', 
-                                  left: `${Math.min(...milestones.map(m => m.percent!))}%`,
-                                  width: `${Math.max(...milestones.map(m => m.percent!)) - Math.min(...milestones.map(m => m.percent!))}%`,
-                                  height: '0.4cqi',
-                                  backgroundColor: color,
-                                  opacity: 0.5,
-                                  zIndex: 1
-                                }}></div>
-                              )}
-                              
-                              {/* Dots and Labels */}
-                              {milestones.map((m, mIdx) => (
-                                <div key={mIdx} style={{ position: 'absolute', left: `${m.percent}%`, top: '50%', transform: 'translate(-50%, -50%)', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                  <div style={{ fontSize: '1.2cqi', color: '#D1D5DB', marginBottom: '0.2cqi', whiteSpace: 'nowrap', position: 'absolute', top: '-1.8cqi' }}>{m.label} {m.date}</div>
-                                  <div style={{ width: '1.5cqi', height: '1.5cqi', backgroundColor: color, borderRadius: '50%', border: '0.2cqi solid #1F2937', boxShadow: '0 0 0.5cqi rgba(0,0,0,0.5)' }}></div>
-                                </div>
-                              ))}
-                            </div>
+                    <div className="slide-content" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', position: 'relative' }}>
+                      
+                      <div style={{ position: 'relative', width: '85%', height: '0.4cqi', backgroundColor: 'rgba(255,255,255,0.2)', margin: '0 auto', borderRadius: '1cqi' }}>
+                        
+                        {[1, 10, 20, 30].map(d => (
+                          <div key={`axis-${d}`} style={{ position: 'absolute', left: `${(d / 31) * 100}%`, top: '1.5cqi', transform: 'translateX(-50%)', color: '#9CA3AF', fontSize: '1.5cqi' }}>
+                            <div style={{ position: 'absolute', top: '-1.5cqi', left: '50%', width: '2px', height: '1cqi', backgroundColor: 'rgba(255,255,255,0.2)' }}></div>
+                            {month}/{d}
                           </div>
-                        );
-                      })}
+                        ))}
+
+                        {entries.map((entry, idx) => {
+                          const percent = (entry.day / 31) * 100;
+                          const pIdx = data.projects.findIndex(p => p.id === entry.projectId);
+                          const color = colors[pIdx % colors.length];
+                          const isTop = idx % 2 === 0;
+
+                          return (
+                            <div key={`dot-${idx}`} style={{ position: 'absolute', left: `${percent}%`, top: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                              
+                              <div style={{ width: '1.5cqi', height: '1.5cqi', backgroundColor: color, borderRadius: '50%', border: '0.2cqi solid #1F2937', boxShadow: '0 0 0.5cqi rgba(0,0,0,0.5)', zIndex: 10 }}></div>
+                              
+                              <div style={{ position: 'absolute', top: isTop ? '-3.5cqi' : '1.5cqi', left: '50%', width: '0.2cqi', height: '3cqi', backgroundColor: color, opacity: 0.5 }}></div>
+                              
+                              <div style={{ 
+                                position: 'absolute', 
+                                top: isTop ? '-8cqi' : '4.5cqi', 
+                                left: '50%', 
+                                transform: 'translateX(-50%)', 
+                                backgroundColor: 'rgba(255,255,255,0.05)',
+                                border: `1px solid ${color}`,
+                                padding: '0.5cqi 1cqi',
+                                borderRadius: '0.5cqi',
+                                color: '#F3F4F6',
+                                fontSize: '1.5cqi',
+                                whiteSpace: 'nowrap',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                zIndex: 11
+                              }}>
+                                <strong style={{ color: color, fontSize: '1.8cqi', marginBottom: '0.2cqi' }}>{entry.projectName}</strong>
+                                <span>{entry.milestoneName} ({entry.originalDate})</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
+                );
+              });
 
-              return [...slidesElements, timelineSlide];
+              return [...slidesElements, ...monthSlides];
             })()}
           </div>
         )}
