@@ -1,0 +1,77 @@
+{
+  "employeeName": "",
+  "department": "",
+  "dateRange": "本週",
+  "projects": [
+    {
+      "id": "p-1",
+      "name": "舒鼻通",
+      "tasks": [
+        { "id": "t-1-1", "description": "追蹤舒鼻通再登場藍新金流審核是否通過", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-1-2", "description": "追蹤各項待回覆事宜（電池、品質、運費、賠償）", "hasContact": true, "contact": { "person": "陳總", "progress": "追蹤回覆：電池、品質、運費、賠償" } },
+        { "id": "t-1-3", "description": "確認款項互結方式", "hasContact": true, "contact": { "person": "Ray", "progress": "與 Ray 確認款項互結方式" } },
+        { "id": "t-1-4", "description": "計算尾款", "hasContact": true, "contact": { "person": "Dennis", "progress": "請 Dennis 計算尾款" } },
+        { "id": "t-1-5", "description": "客服回覆", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-1-6", "description": "通路規劃：鋪舒鼻通通路、整理通路提案資料、整理產品資料包、整理價格與通路政策", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-1-7", "description": "備貨評估：評估備貨數量、規劃通路備貨安排", "hasContact": false, "contact": { "person": "", "progress": "" } }
+      ],
+      "nextWeekPlan": ""
+    },
+    {
+      "id": "p-2",
+      "name": "拍攝專案",
+      "tasks": [
+        { "id": "t-2-1", "description": "6月底拍攝準備（時間未定）：藥器拍攝、烘衣機拍攝、核對腳本、確認樣品到貨時間", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-2-2", "description": "確認拍攝現場安排與白袍報價", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-2-3", "description": "6/16拍攝：飲水機拍攝、Pizza機拍攝、確認腳本與樣品、確認拍攝安排", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-2-4", "description": "腳本規劃：濾水器營養師腳本、Pizza機營養師腳本", "hasContact": false, "contact": { "person": "", "progress": "" } }
+      ],
+      "nextWeekPlan": ""
+    },
+    {
+      "id": "p-3",
+      "name": "各項小專案進度 (行李箱/濾水器/烤箱/烘衣機/Bebird/Indiegogo/田龍蝦)",
+      "tasks": [
+        { "id": "t-3-1", "description": "【行李箱】安排 6/15 上午會議、製作 10 月上線時程表、7 月完成文案與素材架構給油頭設計", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-3-2", "description": "【行李箱】拍攝影片與初版追蹤", "hasContact": true, "contact": { "person": "俊佑", "progress": "請俊佑拍攝影片並追蹤影片初版" } },
+        { "id": "t-3-3", "description": "【濾水器】7/26 上線規劃、規劃頁面架構", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-3-4", "description": "【濾水器】確認樣品進度", "hasContact": true, "contact": { "person": "Jason", "progress": "問 Jason 樣品是否完成" } },
+        { "id": "t-3-5", "description": "【烤箱】進度追蹤（9月上線）\n【烘衣機】時程往後延，追蹤樣品進度", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-3-6", "description": "【Bebird】對帳、數量核對\n【Indiegogo】英文文案修改\n【田龍蝦】需求表整理", "hasContact": false, "contact": { "person": "", "progress": "" } }
+      ],
+      "nextWeekPlan": ""
+    },
+    {
+      "id": "p-4",
+      "name": "M基地",
+      "tasks": [
+        { "id": "t-4-1", "description": "確認各梯次人數", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-4-2", "description": "確認成果發表會支援", "hasContact": true, "contact": { "person": "Kerry", "progress": "與 Kerry 確認成果發表會支援" } },
+        { "id": "t-4-3", "description": "M基地客服回覆、廣告素材規劃", "hasContact": false, "contact": { "person": "", "progress": "" } }
+      ],
+      "nextWeekPlan": ""
+    },
+    {
+      "id": "p-5",
+      "name": "內部管理 (新人培訓與 SOP 建置)",
+      "tasks": [
+        { "id": "t-5-1", "description": "新人培訓：新人報到、SOP導入、工作分工安排、製作新人管理員 QR Code", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-5-2", "description": "出貨流程教學", "hasContact": true, "contact": { "person": "Shawn", "progress": "Shawn 出貨流程教學" } },
+        { "id": "t-5-3", "description": "SOP建置：Shopify、Kickstarter、Indiegogo規格表、美國文案與方案規格表、製圖規格表、出貨流程表", "hasContact": false, "contact": { "person": "", "progress": "" } }
+      ],
+      "nextWeekPlan": ""
+    },
+    {
+      "id": "p-6",
+      "name": "其他追蹤與行政事項",
+      "tasks": [
+        { "id": "t-6-1", "description": "詢問 BSMI 實驗室", "hasContact": true, "contact": { "person": "Andrew", "progress": "問 Andrew BSMI 實驗室" } },
+        { "id": "t-6-2", "description": "詢問廣告進度", "hasContact": true, "contact": { "person": "Jeremy", "progress": "問 Jeremy 廣告進度" } },
+        { "id": "t-6-3", "description": "詢問是否有推薦日本法律顧問", "hasContact": true, "contact": { "person": "Sandy", "progress": "問 Sandy 是否有推薦日本法律顧問" } },
+        { "id": "t-6-4", "description": "行政庶務：抱枕預熱頁設定、日本電商改版、收音機 B-test 新頁面、Dennis 專案總表更新、回客服、實習面試安排、開發票、速買配付款、追蹤田龍蝦是否已匯款", "hasContact": false, "contact": { "person": "", "progress": "" } },
+        { "id": "t-6-5", "description": "電商系統評估：比較 WACA 與 Shopline、確認 WACA 3.5%收費機制、評估免費版是否足夠、未來升級成本", "hasContact": false, "contact": { "person": "", "progress": "" } }
+      ],
+      "nextWeekPlan": ""
+    }
+  ]
+}
