@@ -780,18 +780,68 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         ))}
                       </div>
 
+                      {/* SVG Connecting Lines */}
+                      <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 5 }}>
+                        {(() => {
+                          const tasks = [...monthData.tasks].sort((a, b) => a.day - b.day);
+                          let topEdge = -10;
+                          let bottomEdge = -10;
+                          const LABEL_WIDTH = 22; // approx width in %
+                          const GAP = 2; // gap in %
+
+                          return tasks.map((task, i) => {
+                            const isTop = i % 2 === 0;
+                            const dotPos = (task.day / monthData.days) * 100;
+                            let idealLeftEdge = dotPos - LABEL_WIDTH / 2;
+                            
+                            if (isTop) {
+                              if (idealLeftEdge < topEdge) idealLeftEdge = topEdge + GAP;
+                              topEdge = idealLeftEdge + LABEL_WIDTH;
+                            } else {
+                              if (idealLeftEdge < bottomEdge) idealLeftEdge = bottomEdge + GAP;
+                              bottomEdge = idealLeftEdge + LABEL_WIDTH;
+                            }
+                            
+                            const labelPos = idealLeftEdge + LABEL_WIDTH / 2;
+                            
+                            // Save positions for the next render pass (dots & labels)
+                            (task as any)._rendered = { dotPos, labelPos, isTop };
+                            
+                            return (
+                              <line 
+                                key={`line-${task.taskId}`}
+                                x1={`${dotPos}%`} 
+                                y1="50%" 
+                                x2={`${labelPos}%`} 
+                                y2={isTop ? "30%" : "70%"} 
+                                stroke={task.color} 
+                                strokeWidth="0.2cqi" 
+                                strokeDasharray="0.6cqi"
+                                opacity="0.6"
+                              />
+                            );
+                          });
+                        })()}
+                      </svg>
+
                       {/* Dots & Labels */}
-                      {monthData.tasks.map((task, tIdx) => {
-                        const leftPos = (task.day / monthData.days) * 100;
-                        const isTop = tIdx % 2 === 0;
+                      {monthData.tasks.map((task) => {
+                        const { dotPos, labelPos, isTop } = (task as any)._rendered;
                         return (
-                          <div key={task.taskId} className="timeline-item" style={{ left: `${leftPos}%` }}>
-                            <div className="timeline-dot" style={{ color: task.color }}></div>
-                            <div className={`timeline-label-box ${isTop ? 'top' : 'bottom'}`} style={{ borderColor: task.color }}>
-                              <div className="timeline-proj-name" style={{ color: task.color }}>{task.project}</div>
-                              <div>{task.description}</div>
+                          <React.Fragment key={task.taskId}>
+                            {/* Dot */}
+                            <div className="timeline-item" style={{ left: `${dotPos}%` }}>
+                              <div className="timeline-dot" style={{ color: task.color }}></div>
                             </div>
-                          </div>
+                            
+                            {/* Label */}
+                            <div className="timeline-item" style={{ left: `${labelPos}%`, zIndex: 11 }}>
+                              <div className={`timeline-label-box ${isTop ? 'top' : 'bottom'}`} style={{ borderColor: task.color, transform: 'translateX(-50%)', left: '0' }}>
+                                <div className="timeline-proj-name" style={{ color: task.color }}>{task.project}</div>
+                                <div>{task.description}</div>
+                              </div>
+                            </div>
+                          </React.Fragment>
                         );
                       })}
                     </div>
