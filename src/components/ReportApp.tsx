@@ -193,6 +193,75 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
     setTimeout(() => setSaveStatus(''), 3000);
   };
 
+  const syncToLINE = async () => {
+    if (!window.confirm('確定要將網頁上的任務同步回 LINE 嗎？\n這將會：\n1. 新增網頁上新建的任務\n2. 修改原有任務\n3. 從 LINE 刪除您在網頁上移除的任務！')) {
+      return;
+    }
+    try {
+      setSaveStatus('正在與 LINE 雙向同步...');
+      const res = await fetch('https://personal-secretary-bot-banx.onrender.com/api/tasks');
+      const result = await res.json();
+      if (!result.success) throw new Error('無法取得 LINE 任務');
+      const lineTasks = result.data;
+      
+      const currentTasks = data.projects.flatMap(p => p.tasks.map(t => ({ ...t, project: p.name })));
+      
+      let newCount = 0;
+      let updateCount = 0;
+      let deleteCount = 0;
+
+      // 1. Delete tasks that are in LINE but no longer in UI
+      for (const lt of lineTasks) {
+        if (!currentTasks.some(ct => ct.id === lt.id)) {
+          await fetch(`https://personal-secretary-bot-banx.onrender.com/api/tasks/${lt.id}`, { method: 'DELETE' });
+          deleteCount++;
+        }
+      }
+
+      // 2. Add or Update
+      for (const ct of currentTasks) {
+        if (!ct.description.trim()) continue;
+        
+        const existsInLine = lineTasks.some((lt: any) => lt.id === ct.id);
+
+        if (existsInLine) {
+           await fetch(`https://personal-secretary-bot-banx.onrender.com/api/tasks/${ct.id}`, {
+             method: 'PUT',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ description: ct.description, project: ct.project || null })
+           });
+           updateCount++;
+        } else {
+           const createRes = await fetch('https://personal-secretary-bot-banx.onrender.com/api/tasks', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ description: ct.description, project: ct.project || null })
+           });
+           const created = await createRes.json();
+           if (created.success && created.data) {
+              // Update local ID to the real UUID so it matches next time
+              setData(prev => ({
+                ...prev,
+                projects: prev.projects.map(p => ({
+                  ...p,
+                  tasks: p.tasks.map(t => t.id === ct.id ? { ...t, id: created.data.id } : t)
+                }))
+              }));
+           }
+           newCount++;
+        }
+      }
+
+      setSaveStatus('✅ 同步成功！');
+      alert(`雙向同步完成！\n新增了 ${newCount} 筆\n更新了 ${updateCount} 筆\n刪除了 ${deleteCount} 筆`);
+    } catch (e: any) {
+      console.error(e);
+      setSaveStatus('❌ 同步失敗');
+      alert('同步失敗：' + e.message);
+    }
+    setTimeout(() => setSaveStatus(''), 3000);
+  };
+
   // State mutators
   const updateGeneralInfo = (field: keyof ReportData, value: string) => {
     setData(prev => ({ ...prev, [field]: value }));
@@ -295,6 +364,9 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             </button>
             <button className="btn" style={{ backgroundColor: '#10B981', color: 'white' }} onClick={handleImportFromLINE}>
               📥 匯入 LINE 任務
+            </button>
+            <button className="btn" style={{ backgroundColor: '#3B82F6', color: 'white', fontWeight: 'bold', boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.5)' }} onClick={syncToLINE}>
+              🔄 雙向同步到 LINE
             </button>
             <button className="btn btn-primary" onClick={saveToLocal} style={{ boxShadow: 'var(--shadow-sm)' }}>
               <Save size={18} style={{ marginRight: '0.5rem' }}/> 儲存進度
