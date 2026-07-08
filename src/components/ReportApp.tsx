@@ -33,6 +33,40 @@ const formatDayToDate = (dayOfYear: number) => {
   return '';
 };
 
+// --- TIMELINE PARSING LOGIC ---
+const parseDate = (text: string) => {
+  if (!text) return null;
+  // Matches formats like: 7/5, 07/05, 7.5, 7月5日, 7月5號
+  const regex = /(?:^|\s|[^0-9a-zA-Z])(0?[1-9]|1[0-2])\s*[\/\.月]\s*(0?[1-9]|[12]\d|3[01])\s*(?:日|號)?/;
+  const match = text.match(regex);
+  if (match) {
+    return { month: parseInt(match[1]), day: parseInt(match[2]) };
+  }
+  return null;
+};
+
+const getDaysInMonth = (month: number) => {
+  const daysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return daysInMonth[month] || 30;
+};
+
+const PALETTE = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6'];
+
+interface TimelineTask {
+  day: number;
+  project: string;
+  color: string;
+  description: string;
+  taskId: string;
+}
+
+interface TimelineMonth {
+  month: number;
+  days: number;
+  tasks: TimelineTask[];
+}
+// ------------------------------
+
 interface ReportAppProps {
   currentUser?: string;
 }
@@ -598,8 +632,26 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-contact-row { display: flex; align-items: flex-start; gap: 0.5cqi; }
           
           .slide-next-week { background: rgba(255,255,255,0.02); border: 0.2cqi dashed rgba(255,255,255,0.15); border-radius: 1.5cqi; padding: 2cqi; font-size: 2.8cqi; color: #D1D5DB; white-space: pre-wrap; line-height: 1.7; flex: 1; overflow: hidden; }
-          .slide-watermark { position: absolute; bottom: 2cqi; right: 3cqi; font-size: 1.4cqi; color: rgba(255,255,255,0.3); }
-          .slide-page-num { position: absolute; bottom: 2cqi; left: 3cqi; font-size: 1.6cqi; font-weight: bold; color: rgba(255,255,255,0.2); }
+          
+          /* Timeline UI */
+          .timeline-container { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; margin: 5cqi 0; }
+          .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: 0.4cqi; background: rgba(255,255,255,0.2); border-radius: 1cqi; transform: translateY(-50%); }
+          .timeline-ticks { position: absolute; top: 50%; left: 0; width: 100%; height: 100%; pointer-events: none; }
+          .timeline-tick { position: absolute; top: -1cqi; width: 0.2cqi; height: 2.4cqi; background: rgba(255,255,255,0.3); }
+          .timeline-tick-label { position: absolute; top: 2.5cqi; transform: translateX(-50%); font-size: 1.6cqi; color: #9CA3AF; }
+          .timeline-item { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; }
+          .timeline-dot { width: 1.8cqi; height: 1.8cqi; border-radius: 50%; box-shadow: 0 0 10px currentColor; border: 0.3cqi solid #0B132B; background: currentColor; }
+          .timeline-label-box { position: absolute; width: 22cqi; padding: 0.8cqi 1cqi; border-radius: 0.6cqi; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.1); font-size: 1.6cqi; text-align: center; color: white; word-break: break-all; white-space: normal; }
+          .timeline-label-box.top { bottom: 3cqi; }
+          .timeline-label-box.bottom { top: 3cqi; }
+          .timeline-proj-name { font-weight: bold; font-size: 1.4cqi; margin-bottom: 0.2cqi; }
+          .timeline-month-title { font-size: 5cqi; font-weight: bold; color: white; text-align: center; margin-bottom: 2cqi; letter-spacing: 0.2cqi; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+          .timeline-legend { display: flex; flex-wrap: wrap; gap: 1.5cqi; justify-content: center; margin-top: auto; padding: 1.5cqi; background: rgba(255,255,255,0.05); border-radius: 1cqi; border: 1px solid rgba(255,255,255,0.1); }
+          .timeline-legend-item { display: flex; align-items: center; gap: 0.5cqi; font-size: 1.8cqi; }
+          .timeline-legend-dot { width: 1.2cqi; height: 1.2cqi; border-radius: 50%; }
+
+          .slide-page-num { position: absolute; bottom: 2cqi; right: 4cqi; font-size: 2cqi; color: #6B7280; font-family: monospace; }
+          .slide-watermark { position: absolute; top: 2cqi; right: 4cqi; font-size: 1.5cqi; color: #4B5563; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
         `}} />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }} className="no-print">
@@ -610,12 +662,10 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
         </div>
 
         {viewMode === 'table' ? (
-          /* TABLE MODE VIEW */
           <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '0.5rem', boxShadow: 'var(--shadow-md)' }}>
             <div className="table-header">
               <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>每週工作匯報</h1>
               <div style={{ display: 'flex', justifyContent: 'space-between', color: '#4B5563', marginTop: '1rem' }}>
-
                 <span><strong>期間：</strong> {data.dateRange || '未填寫'}</span>
               </div>
             </div>
@@ -675,6 +725,94 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               </div>
             </div>
 
+            {/* Generate Timeline Slides */}
+            {(() => {
+              const monthsData: Record<number, TimelineMonth> = {};
+              const projColors: Record<string, string> = {};
+              let colorIdx = 0;
+
+              data.projects.forEach(proj => {
+                if (!proj.name.trim()) return;
+                if (!projColors[proj.id]) {
+                  projColors[proj.id] = PALETTE[colorIdx % PALETTE.length];
+                  colorIdx++;
+                }
+
+                proj.tasks.forEach(task => {
+                  const dateInfo = parseDate(task.description);
+                  if (dateInfo) {
+                    if (!monthsData[dateInfo.month]) {
+                      monthsData[dateInfo.month] = {
+                        month: dateInfo.month,
+                        days: getDaysInMonth(dateInfo.month),
+                        tasks: []
+                      };
+                    }
+                    monthsData[dateInfo.month].tasks.push({
+                      day: dateInfo.day,
+                      project: proj.name,
+                      color: projColors[proj.id],
+                      description: task.description,
+                      taskId: task.id
+                    });
+                  }
+                });
+              });
+
+              return Object.values(monthsData).sort((a, b) => a.month - b.month).map((monthData, sIdx) => {
+                const activeProjects = Array.from(new Set(monthData.tasks.map(t => t.project)));
+                
+                return (
+                  <div key={`timeline-${monthData.month}`} className="slide">
+                    <div className="slide-watermark">Weekly Report</div>
+                    <div className="timeline-month-title">{monthData.month}月 專案時程表</div>
+                    
+                    <div className="timeline-container">
+                      <div className="timeline-line"></div>
+                      
+                      {/* Ticks */}
+                      <div className="timeline-ticks">
+                        {[1, 5, 10, 15, 20, 25, monthData.days].map(day => (
+                          <div key={day}>
+                            <div className="timeline-tick" style={{ left: `${(day / monthData.days) * 100}%` }}></div>
+                            <div className="timeline-tick-label" style={{ left: `${(day / monthData.days) * 100}%` }}>{day}</div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Dots & Labels */}
+                      {monthData.tasks.map((task, tIdx) => {
+                        const leftPos = (task.day / monthData.days) * 100;
+                        const isTop = tIdx % 2 === 0;
+                        return (
+                          <div key={task.taskId} className="timeline-item" style={{ left: `${leftPos}%` }}>
+                            <div className="timeline-dot" style={{ color: task.color }}></div>
+                            <div className={`timeline-label-box ${isTop ? 'top' : 'bottom'}`} style={{ borderColor: task.color }}>
+                              <div className="timeline-proj-name" style={{ color: task.color }}>{task.project}</div>
+                              <div>{task.description}</div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="timeline-legend">
+                      {activeProjects.map(projName => {
+                        const proj = data.projects.find(p => p.name === projName);
+                        const color = proj ? projColors[proj.id] : '#fff';
+                        return (
+                          <div key={projName} className="timeline-legend-item">
+                            <div className="timeline-legend-dot" style={{ backgroundColor: color }}></div>
+                            <span>{projName}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+
             {/* Content Slides (One per project, paginated if too many tasks) */}
             {data.projects.length === 0 && (
               <div className="slide" style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -704,7 +842,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
               const slidesElements = slidesData.map((slideData, idx) => (
                 <div key={`${slideData.project.id}-${slideData.part}`} className="slide">
-                  <div className="slide-page-num">{idx + 1} / {slidesData.length + 1}</div>
+                  <div className="slide-page-num">{idx + 1}</div>
                   <div className="slide-watermark">Weekly Report</div>
                   
                   <div className="slide-header">
