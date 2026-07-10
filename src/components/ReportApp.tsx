@@ -843,7 +843,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           <div className="slide-col" style={{ flex: 1, width: '100%' }}>
                             <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '3.2cqi', marginBottom: '2cqi', color: projectColor }}>
                               <CheckCircle2 size={20} />
-                              <span>本週工作</span>
+                              <span>工作項目</span>
                             </div>
                             <div className="slide-tasks-container">
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi', textAlign: 'center', width: '100%' }}>無具體項目</p>}
