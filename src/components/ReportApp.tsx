@@ -831,7 +831,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         <div className="slide-watermark">Weekly Report</div>
                         
                         <div className="slide-header">
-                          <h2 className="slide-title" style={{ color: titleColor, textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                          <h2 className="slide-title" style={{ color: '#000000', textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
                             {slideData.project.name}
                             {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: '1cqi' }}>(Part {slideData.part})</span>}
                           </h2>
