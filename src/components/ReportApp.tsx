@@ -822,13 +822,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
                   {slidesData.map((slideData) => {
                     const pageNum = slideIndexCounter++;
+                    const projectColor = projColors[slideData.project.id] || '#3B82F6';
+                    
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide">
                         <div className="slide-page-num">{pageNum}</div>
                         <div className="slide-watermark">Weekly Report</div>
                         
                         <div className="slide-header">
-                          <h2 className="slide-title">
+                          <h2 className="slide-title" style={{ color: projectColor, textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
                             {slideData.project.name}
                             {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: '1cqi' }}>(Part {slideData.part})</span>}
                           </h2>
@@ -839,18 +841,18 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         
                         <div className="slide-content">
                           <div className="slide-col" style={{ flex: 1, width: '100%' }}>
-                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '3.2cqi', marginBottom: '2cqi' }}>
+                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '3.2cqi', marginBottom: '2cqi', color: projectColor }}>
                               <CheckCircle2 size={20} />
                               <span>本週工作</span>
                             </div>
                             <div className="slide-tasks-container">
-                              {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi' }}>無具體項目</p>}
+                              {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map(task => (
-                                <div key={task.id} className="slide-task-card">
-                                  <div className="slide-task-desc">{task.description || '(未填寫說明)'}</div>
+                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: projectColor, color: '#FFFFFF', border: 'none' }}>
+                                  <div className="slide-task-desc" style={{ color: '#FFFFFF' }}>{task.description || '(未填寫說明)'}</div>
                                   
                                   {task.hasContact && (
-                                    <div className="slide-contact">
+                                    <div className="slide-contact" style={{ backgroundColor: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)', color: '#FFFFFF' }}>
                                       <div className="slide-contact-row">
                                         <Users style={{ flexShrink: 0, marginTop: '0.2cqi' }}/>
                                         <span><strong>窗口：</strong>{task.contact?.person || '未指定'}</span>
