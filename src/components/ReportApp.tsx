@@ -33,7 +33,7 @@ const formatDayToDate = (dayOfYear: number) => {
   return '';
 };
 
-// --- TIMELINE PARSING LOGIC ---
+// --- TIMELINE & CALENDAR PARSING LOGIC ---
 const parseDate = (text: string) => {
   if (!text) return null;
   // Matches formats like: 7/5, 07/05, 7.5, 7月5日, 7月5號
@@ -48,6 +48,31 @@ const parseDate = (text: string) => {
 const getDaysInMonth = (month: number) => {
   const daysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
   return daysInMonth[month] || 30;
+};
+
+const generateCalendarGrid = (year: number, month: number) => {
+  const firstDay = new Date(year, month - 1, 1);
+  const numDays = new Date(year, month, 0).getDate();
+  let startDay = firstDay.getDay(); 
+  startDay = startDay === 0 ? 6 : startDay - 1; // Convert to Mon=0...Sun=6
+  
+  const grid: number[][] = [];
+  let currentWeek = Array(7).fill(0);
+  
+  let currentDay = 1;
+  for (let i = startDay; i < 7; i++) {
+    currentWeek[i] = currentDay++;
+  }
+  grid.push(currentWeek);
+  
+  while (currentDay <= numDays) {
+    currentWeek = Array(7).fill(0);
+    for (let i = 0; i < 7 && currentDay <= numDays; i++) {
+      currentWeek[i] = currentDay++;
+    }
+    grid.push(currentWeek);
+  }
+  return grid;
 };
 
 const PALETTE = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6'];
@@ -649,6 +674,19 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .timeline-legend { display: flex; flex-wrap: wrap; gap: 1.5cqi; justify-content: center; margin-top: auto; padding: 1.5cqi; background: rgba(255,255,255,0.05); border-radius: 1cqi; border: 1px solid rgba(255,255,255,0.1); }
           .timeline-legend-item { display: flex; align-items: center; gap: 0.5cqi; font-size: 1.8cqi; }
           .timeline-legend-dot { width: 1.2cqi; height: 1.2cqi; border-radius: 50%; }
+          
+          /* Calendar UI */
+          .calendar-container { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.02); border-radius: 1.5cqi; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; margin-bottom: 2cqi; }
+          .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.1); }
+          .calendar-day-name { padding: 1cqi; text-align: center; font-weight: bold; font-size: 1.8cqi; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.1cqi; }
+          .calendar-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; }
+          .calendar-cell { border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0.5cqi; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+          .calendar-cell:nth-child(7n) { border-right: none; }
+          .calendar-cell.empty { background: rgba(0,0,0,0.1); }
+          .calendar-date-num { font-size: 2cqi; font-weight: bold; color: rgba(255,255,255,0.8); margin-bottom: 0.5cqi; }
+          .calendar-task-list { display: flex; flex-direction: column; gap: 0.4cqi; overflow-y: auto; flex: 1; padding-right: 0.2cqi; }
+          .calendar-task-item { background: rgba(255,255,255,0.05); border-radius: 0.4cqi; padding: 0.4cqi 0.6cqi; font-size: 1.3cqi; color: white; display: flex; align-items: flex-start; gap: 0.4cqi; word-break: break-all; }
+          .calendar-task-dot { width: 1cqi; height: 1cqi; border-radius: 50%; flex-shrink: 0; margin-top: 0.2cqi; }
 
           .slide-page-num { position: absolute; bottom: 2cqi; right: 4cqi; font-size: 2cqi; color: #6B7280; font-family: monospace; }
           .slide-watermark { position: absolute; top: 2cqi; right: 4cqi; font-size: 1.5cqi; color: #4B5563; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
@@ -762,103 +800,160 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               return Object.values(monthsData).sort((a, b) => a.month - b.month).map((monthData, sIdx) => {
                 const activeProjects = Array.from(new Set(monthData.tasks.map(t => t.project)));
                 
+                const currentYear = new Date().getFullYear();
+                const calendarGrid = generateCalendarGrid(currentYear, monthData.month);
+
                 return (
-                  <div key={`timeline-${monthData.month}`} className="slide">
-                    <div className="slide-watermark">Weekly Report</div>
-                    <div className="timeline-month-title">{monthData.month}月 專案時程表</div>
-                    
-                    <div className="timeline-container">
-                      <div className="timeline-line"></div>
+                  <React.Fragment key={`month-group-${monthData.month}`}>
+                    {/* Timeline Slide */}
+                    <div className="slide">
+                      <div className="slide-watermark">Weekly Report</div>
+                      <div className="timeline-month-title">{monthData.month}月 專案時程表</div>
                       
-                      {/* Ticks */}
-                      <div className="timeline-ticks">
-                        {[1, 5, 10, 15, 20, 25, monthData.days].map(day => (
-                          <div key={day}>
-                            <div className="timeline-tick" style={{ left: `${(day / monthData.days) * 100}%` }}></div>
-                            <div className="timeline-tick-label" style={{ left: `${(day / monthData.days) * 100}%` }}>{day}</div>
-                          </div>
-                        ))}
+                      <div className="timeline-container">
+                        <div className="timeline-line"></div>
+                        
+                        {/* Ticks */}
+                        <div className="timeline-ticks">
+                          {[1, 5, 10, 15, 20, 25, monthData.days].map(day => (
+                            <div key={day}>
+                              <div className="timeline-tick" style={{ left: `${(day / monthData.days) * 100}%` }}></div>
+                              <div className="timeline-tick-label" style={{ left: `${(day / monthData.days) * 100}%` }}>{day}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* SVG Connecting Lines */}
+                        <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 5 }}>
+                          {(() => {
+                            const tasks = [...monthData.tasks].sort((a, b) => a.day - b.day);
+                            let topEdge = -10;
+                            let bottomEdge = -10;
+                            const LABEL_WIDTH = 22; // approx width in %
+                            const GAP = 2; // gap in %
+
+                            return tasks.map((task, i) => {
+                              const isTop = i % 2 === 0;
+                              const dotPos = (task.day / monthData.days) * 100;
+                              let idealLeftEdge = dotPos - LABEL_WIDTH / 2;
+                              
+                              if (isTop) {
+                                if (idealLeftEdge < topEdge) idealLeftEdge = topEdge + GAP;
+                                topEdge = idealLeftEdge + LABEL_WIDTH;
+                              } else {
+                                if (idealLeftEdge < bottomEdge) idealLeftEdge = bottomEdge + GAP;
+                                bottomEdge = idealLeftEdge + LABEL_WIDTH;
+                              }
+                              
+                              const labelPos = idealLeftEdge + LABEL_WIDTH / 2;
+                              
+                              // Save positions for the next render pass (dots & labels)
+                              (task as any)._rendered = { dotPos, labelPos, isTop };
+                              
+                              return (
+                                <line 
+                                  key={`line-${task.taskId}`}
+                                  x1={`${dotPos}%`} 
+                                  y1="50%" 
+                                  x2={`${labelPos}%`} 
+                                  y2={isTop ? "calc(50% - 3.5cqi)" : "calc(50% + 3.5cqi)"} 
+                                  stroke={task.color} 
+                                  strokeWidth="0.2cqi" 
+                                  strokeDasharray="0.6cqi"
+                                  opacity="0.6"
+                                />
+                              );
+                            });
+                          })()}
+                        </svg>
+
+                        {/* Dots & Labels */}
+                        {monthData.tasks.map((task) => {
+                          const { dotPos, labelPos, isTop } = (task as any)._rendered;
+                          return (
+                            <React.Fragment key={task.taskId}>
+                              {/* Dot */}
+                              <div className="timeline-item" style={{ left: `${dotPos}%` }}>
+                                <div className="timeline-dot" style={{ color: task.color }}></div>
+                              </div>
+                              
+                              {/* Label */}
+                              <div className="timeline-item" style={{ left: `${labelPos}%`, zIndex: 11 }}>
+                                <div className={`timeline-label-box ${isTop ? 'top' : 'bottom'}`} style={{ borderColor: task.color, transform: 'translateX(-50%)', left: '0' }}>
+                                  <div className="timeline-proj-name" style={{ color: task.color }}>{task.project}</div>
+                                  <div>{task.description}</div>
+                                </div>
+                              </div>
+                            </React.Fragment>
+                          );
+                        })}
                       </div>
 
-                      {/* SVG Connecting Lines */}
-                      <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 5 }}>
-                        {(() => {
-                          const tasks = [...monthData.tasks].sort((a, b) => a.day - b.day);
-                          let topEdge = -10;
-                          let bottomEdge = -10;
-                          const LABEL_WIDTH = 22; // approx width in %
-                          const GAP = 2; // gap in %
-
-                          return tasks.map((task, i) => {
-                            const isTop = i % 2 === 0;
-                            const dotPos = (task.day / monthData.days) * 100;
-                            let idealLeftEdge = dotPos - LABEL_WIDTH / 2;
-                            
-                            if (isTop) {
-                              if (idealLeftEdge < topEdge) idealLeftEdge = topEdge + GAP;
-                              topEdge = idealLeftEdge + LABEL_WIDTH;
-                            } else {
-                              if (idealLeftEdge < bottomEdge) idealLeftEdge = bottomEdge + GAP;
-                              bottomEdge = idealLeftEdge + LABEL_WIDTH;
-                            }
-                            
-                            const labelPos = idealLeftEdge + LABEL_WIDTH / 2;
-                            
-                            // Save positions for the next render pass (dots & labels)
-                            (task as any)._rendered = { dotPos, labelPos, isTop };
-                            
-                            return (
-                              <line 
-                                key={`line-${task.taskId}`}
-                                x1={`${dotPos}%`} 
-                                y1="50%" 
-                                x2={`${labelPos}%`} 
-                                y2={isTop ? "calc(50% - 3.5cqi)" : "calc(50% + 3.5cqi)"} 
-                                stroke={task.color} 
-                                strokeWidth="0.2cqi" 
-                                strokeDasharray="0.6cqi"
-                                opacity="0.6"
-                              />
-                            );
-                          });
-                        })()}
-                      </svg>
-
-                      {/* Dots & Labels */}
-                      {monthData.tasks.map((task) => {
-                        const { dotPos, labelPos, isTop } = (task as any)._rendered;
-                        return (
-                          <React.Fragment key={task.taskId}>
-                            {/* Dot */}
-                            <div className="timeline-item" style={{ left: `${dotPos}%` }}>
-                              <div className="timeline-dot" style={{ color: task.color }}></div>
+                      <div className="timeline-legend">
+                        {activeProjects.map(projName => {
+                          const proj = data.projects.find(p => p.name === projName);
+                          const color = proj ? projColors[proj.id] : '#fff';
+                          return (
+                            <div key={projName} className="timeline-legend-item">
+                              <div className="timeline-legend-dot" style={{ backgroundColor: color }}></div>
+                              <span>{projName}</span>
                             </div>
-                            
-                            {/* Label */}
-                            <div className="timeline-item" style={{ left: `${labelPos}%`, zIndex: 11 }}>
-                              <div className={`timeline-label-box ${isTop ? 'top' : 'bottom'}`} style={{ borderColor: task.color, transform: 'translateX(-50%)', left: '0' }}>
-                                <div className="timeline-proj-name" style={{ color: task.color }}>{task.project}</div>
-                                <div>{task.description}</div>
-                              </div>
-                            </div>
-                          </React.Fragment>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
+                    
+                    {/* Calendar Slide */}
+                    <div className="slide">
+                      <div className="slide-watermark">Weekly Report</div>
+                      <div className="timeline-month-title">{monthData.month}月 日曆視圖</div>
+                      
+                      <div className="calendar-container">
+                        <div className="calendar-header">
+                          {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                            <div key={day} className="calendar-day-name">{day}</div>
+                          ))}
+                        </div>
+                        <div className="calendar-grid">
+                          {calendarGrid.map((week, wIdx) => (
+                            week.map((dayNum, dIdx) => {
+                              if (dayNum === 0) {
+                                return <div key={`empty-${wIdx}-${dIdx}`} className="calendar-cell empty"></div>;
+                              }
+                              
+                              const dayTasks = monthData.tasks.filter(t => t.day === dayNum);
+                              return (
+                                <div key={`day-${dayNum}`} className="calendar-cell">
+                                  <div className="calendar-date-num">{dayNum}</div>
+                                  <div className="calendar-task-list">
+                                    {dayTasks.map(task => (
+                                      <div key={task.taskId} className="calendar-task-item" style={{ borderLeft: `0.3cqi solid ${task.color}` }}>
+                                        <div className="calendar-task-dot" style={{ backgroundColor: task.color }}></div>
+                                        <span>{task.description}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            })
+                          ))}
+                        </div>
+                      </div>
 
-                    <div className="timeline-legend">
-                      {activeProjects.map(projName => {
-                        const proj = data.projects.find(p => p.name === projName);
-                        const color = proj ? projColors[proj.id] : '#fff';
-                        return (
-                          <div key={projName} className="timeline-legend-item">
-                            <div className="timeline-legend-dot" style={{ backgroundColor: color }}></div>
-                            <span>{projName}</span>
-                          </div>
-                        );
-                      })}
+                      <div className="timeline-legend">
+                        {activeProjects.map(projName => {
+                          const proj = data.projects.find(p => p.name === projName);
+                          const color = proj ? projColors[proj.id] : '#fff';
+                          return (
+                            <div key={`cal-legend-${projName}`} className="timeline-legend-item">
+                              <div className="timeline-legend-dot" style={{ backgroundColor: color }}></div>
+                              <span>{projName}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  </React.Fragment>
                 );
               });
             })()}
