@@ -831,7 +831,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: '-4cqi', left: '0cqi', fontSize: '30cqi', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'brightness(0.6)', zIndex: 0, opacity: 0.9, letterSpacing: '-2cqi' }}>
+                        <div style={{ position: 'absolute', top: '-1cqi', left: '0cqi', fontSize: '15cqi', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'brightness(0.6)', zIndex: 0, opacity: 0.9, letterSpacing: '-1cqi' }}>
                           {projNumberStr}
                         </div>
                         <div className="slide-page-num" style={{ zIndex: 1 }}>{pageNum}</div>
