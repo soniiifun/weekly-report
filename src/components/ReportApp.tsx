@@ -689,11 +689,11 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .calendar-container { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.5); border-radius: 1.5cqi; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 2cqi; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
           .dark .calendar-container { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); box-shadow: none; }
           
-          .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.05); }
-          .dark .calendar-header { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1); }
+          .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #3B4B61; border-bottom: 1px solid rgba(0,0,0,0.05); }
+          .dark .calendar-header { background: #1F2937; border-color: rgba(255,255,255,0.1); }
           
-          .calendar-day-name { padding: 1cqi; text-align: center; font-weight: bold; font-size: 1.8cqi; color: #6B7280; text-transform: uppercase; letter-spacing: 0.1cqi; }
-          .dark .calendar-day-name { color: #9CA3AF; }
+          .calendar-day-name { padding: 1cqi; text-align: center; font-weight: bold; font-size: 1.8cqi; color: #FFFFFF; letter-spacing: 0.1cqi; }
+          .dark .calendar-day-name { color: #E5E7EB; }
           
           .calendar-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(0, 1fr); }
           
@@ -705,15 +705,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .calendar-cell.empty { background: rgba(0,0,0,0.02); }
           .dark .calendar-cell.empty { background: rgba(0,0,0,0.1); }
           
-          .calendar-date-num { font-size: 2cqi; font-weight: bold; color: rgba(0,0,0,0.6); margin-bottom: 0.5cqi; flex-shrink: 0; }
+          .calendar-date-num { font-size: 2cqi; font-weight: bold; color: #6B7280; margin-bottom: 0.5cqi; flex-shrink: 0; text-align: center; margin-top: 0.2cqi; }
           .dark .calendar-date-num { color: rgba(255,255,255,0.8); }
           
-          .calendar-task-list { display: flex; flex-direction: column; gap: 0.4cqi; overflow-y: auto; flex: 1; padding-right: 0.2cqi; min-height: 0; }
+          .calendar-task-list { display: flex; flex-direction: column; gap: 0.4cqi; overflow-y: auto; flex: 1; padding: 0.2cqi; min-height: 0; align-items: center; }
           
-          .calendar-task-item { background: rgba(0,0,0,0.03); border-radius: 0.4cqi; padding: 0.4cqi 0.6cqi; font-size: 1.3cqi; color: #1F2937; display: flex; align-items: flex-start; gap: 0.4cqi; word-break: break-all; border: 1px solid rgba(0,0,0,0.05); }
-          .dark .calendar-task-item { background: rgba(255,255,255,0.05); color: white; border-color: transparent; }
+          .calendar-task-item { border-radius: 9999px; padding: 0.3cqi 0.8cqi; font-size: 1.3cqi; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-align: center; gap: 0.4cqi; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 95%; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+          .dark .calendar-task-item { border-color: transparent; }
           
-          .calendar-task-dot { width: 1cqi; height: 1cqi; border-radius: 50%; flex-shrink: 0; margin-top: 0.2cqi; }
+          .calendar-task-dot { display: none; }
 
           .slide-page-num { position: absolute; bottom: 2cqi; right: 4cqi; font-size: 2cqi; color: #9CA3AF; font-family: monospace; }
           .dark .slide-page-num { color: #6B7280; }
@@ -878,7 +878,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         
                         <div className="calendar-container">
                           <div className="calendar-header">
-                            {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
+                            {['一', '二', '三', '四', '五', '六', '日'].map(day => (
                               <div key={day} className="calendar-day-name">{day}</div>
                             ))}
                           </div>
@@ -895,8 +895,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                     <div className="calendar-date-num">{dayNum}</div>
                                     <div className="calendar-task-list">
                                       {dayTasks.map(task => (
-                                        <div key={task.taskId} className="calendar-task-item" style={{ borderLeft: `0.3cqi solid ${task.color}` }}>
-                                          <div className="calendar-task-dot" style={{ backgroundColor: task.color }}></div>
+                                        <div key={task.taskId} className="calendar-task-item" style={{ backgroundColor: task.color }}>
                                           <span>{task.description}</span>
                                         </div>
                                       ))}
