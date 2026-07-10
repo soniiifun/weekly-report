@@ -13,16 +13,14 @@
   --radius-lg: 0.75rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary: #6366F1;
-    --primary-hover: #818CF8;
-    --bg-color: #111827;
-    --surface: #1F2937;
-    --text-main: #F9FAFB;
-    --text-muted: #9CA3AF;
-    --border-color: #374151;
-  }
+.dark {
+  --primary: #6366F1;
+  --primary-hover: #818CF8;
+  --bg-color: #111827;
+  --surface: #1F2937;
+  --text-main: #F9FAFB;
+  --text-muted: #9CA3AF;
+  --border-color: #374151;
 }
 
 * {

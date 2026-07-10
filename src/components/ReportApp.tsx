@@ -75,7 +75,8 @@ const generateCalendarGrid = (year: number, month: number) => {
   return grid;
 };
 
-const PALETTE = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6'];
+// Morandi Palette
+const PALETTE = ['#9EABAE', '#C4A49B', '#A4B29E', '#D4C4B7', '#9297A0', '#C3B5C6', '#D1B894'];
 
 interface TimelineTask {
   day: number;
@@ -104,6 +105,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
   const [isExporting, setIsExporting] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [draftText, setDraftText] = useState('');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     const saved = localStorage.getItem(`weekly-report-data-${currentUser}`);
@@ -190,7 +200,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
         const canvas = await html2canvas(slide, {
           scale: 3, 
           useCORS: true,
-          backgroundColor: '#0B132B'
+          backgroundColor: isDarkMode ? '#0B132B' : '#FFFFFF'
         });
         
         const imgData = canvas.toDataURL('image/jpeg', 0.95);
@@ -587,112 +597,128 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
       <div className="report-preview-container" style={{ backgroundColor: '#E5E7EB', padding: '1rem', borderRadius: '0.5rem', height: '100vh', overflowY: 'auto' }}>
         
         <style dangerouslySetInnerHTML={{__html: `
-          @media (max-width: 1024px) {
-            .responsive-grid { grid-template-columns: 1fr !important; }
-            .report-preview-container { height: auto !important; padding: 0 !important; background: none !important; }
-          }
-          
-          /* Table Mode Styles */
-          .report-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.875rem; background: white; }
-          .report-table th, .report-table td { border: 1px solid #D1D5DB; padding: 0.75rem; text-align: left; vertical-align: top; }
-          .report-table th { background-color: #F3F4F6; font-weight: bold; color: #374151; white-space: nowrap; }
-          .task-cell { white-space: pre-wrap; }
-          .table-header { background: white; padding: 2rem; text-align: center; border-bottom: 2px solid #111827; }
-
-          /* Presentation Mode Styles */
-          .slide-deck { 
-            display: flex; flex-direction: column; gap: 2rem; align-items: center; 
-            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
-          }
+          .slides-container { display: flex; flex-direction: column; gap: 2rem; }
           .slide {
-            container-type: inline-size;
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: linear-gradient(135deg, #0B132B 0%, #000000 100%);
-            color: #FFFFFF;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             padding: 4cqi;
-            display: flex;
-            flex-direction: column;
+            aspect-ratio: 16 / 9;
+            container-type: inline-size;
             position: relative;
             overflow: hidden;
-            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
             page-break-after: always;
-            box-sizing: border-box;
+            border: 1px solid rgba(0,0,0,0.05);
+            color: #111827;
           }
           
-          /* Print Settings */
-          @media print {
-            @page { size: 16in 9in; margin: 0; }
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; background: #000000; margin: 0; }
-            .no-print { display: none !important; }
-            .report-preview-container { height: auto !important; overflow: visible !important; padding: 0 !important; background: none !important; }
-            .slide-deck { gap: 0; }
-            .slide {
-              width: 100vw !important; height: 100vh !important; aspect-ratio: auto !important;
-              border: none !important; border-radius: 0 !important; box-shadow: none !important;
-              margin: 0 !important; padding: 5vw !important;
-            }
-            .slide::after {
-              content: ""; display: block; height: 0; page-break-after: always;
-            }
+          .dark .slide {
+            background: radial-gradient(circle at 50% 0%, #1E1B4B, #0B132B);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
           }
 
-          /* Fluid Scaling Typography & Spacing based on cqi (container query inline size) */
-          .slide svg { width: 1.2em; height: 1.2em; flex-shrink: 0; }
-          .slide-header { border-bottom: 0.1cqi solid rgba(255,255,255,0.2); padding-bottom: 0.5cqi; margin-bottom: 1.5cqi; display: flex; justify-content: space-between; align-items: flex-end; }
-          .slide-title { font-size: 4cqi; font-weight: bold; color: #FFFFFF; margin: 0; }
-          .slide-meta { font-size: 1.8cqi; color: #9CA3AF; text-align: right; }
-          .slide-content { display: flex; flex-direction: column; gap: 3cqi; flex: 1; min-height: 0; overflow: hidden; }
-          .slide-col { display: flex; flex-direction: column; overflow: hidden; }
-          .slide-col-title { font-size: 2.8cqi; font-weight: bold; color: #60A5FA; margin-bottom: 1cqi; display: flex; align-items: center; gap: 0.5cqi; }
+          .slide-title { font-size: 5cqi; font-weight: 800; color: #111827; text-align: center; margin-top: auto; letter-spacing: 0.2cqi; }
+          .dark .slide-title { color: white; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
           
-          .slide-tasks-container { overflow-y: visible; padding-right: 0.5cqi; display: grid; grid-template-columns: 1fr 1fr; gap: 1cqi; align-content: start; }
-          .slide-task-card { background: rgba(255,255,255,0.05); border-radius: 0.8cqi; padding: 1cqi; border-left: 0.6cqi solid #3B82F6; border-top: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); }
-          .slide-task-desc { font-size: 2.2cqi; color: #F3F4F6; white-space: pre-wrap; line-height: 1.6; }
+          .slide-subtitle { font-size: 2.5cqi; color: #4B5563; text-align: center; margin-bottom: auto; margin-top: 1cqi; }
+          .dark .slide-subtitle { color: #9CA3AF; }
+
+          .slide-contact { margin-top: 1cqi; background: rgba(59,130,246,0.1); padding: 1cqi; border-radius: 0.8cqi; font-size: 2cqi; color: #2563EB; display: flex; flex-direction: column; gap: 0.4cqi; border: 1px solid rgba(59,130,246,0.2); }
+          .dark .slide-contact { background: rgba(59,130,246,0.15); color: #93C5FD; border-color: rgba(59,130,246,0.2); }
           
-          .slide-contact { margin-top: 1cqi; background: rgba(59,130,246,0.15); padding: 1cqi; border-radius: 0.8cqi; font-size: 2cqi; color: #93C5FD; display: flex; flex-direction: column; gap: 0.4cqi; border: 1px solid rgba(59,130,246,0.2); }
           .slide-contact-row { display: flex; align-items: flex-start; gap: 0.5cqi; }
           
-          .slide-next-week { background: rgba(255,255,255,0.02); border: 0.2cqi dashed rgba(255,255,255,0.15); border-radius: 1.5cqi; padding: 2cqi; font-size: 2.8cqi; color: #D1D5DB; white-space: pre-wrap; line-height: 1.7; flex: 1; overflow: hidden; }
+          .slide-next-week { background: rgba(0,0,0,0.02); border: 0.2cqi dashed rgba(0,0,0,0.15); border-radius: 1.5cqi; padding: 2cqi; font-size: 2.8cqi; color: #4B5563; white-space: pre-wrap; line-height: 1.7; flex: 1; overflow: hidden; }
+          .dark .slide-next-week { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.15); color: #D1D5DB; }
           
           /* Timeline UI */
           .timeline-container { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; margin: 5cqi 0; }
-          .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: 0.4cqi; background: rgba(255,255,255,0.2); border-radius: 1cqi; transform: translateY(-50%); }
+          
+          .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: 0.4cqi; background: #E5E7EB; border-radius: 1cqi; transform: translateY(-50%); }
+          .dark .timeline-line { background: rgba(255,255,255,0.2); }
+          
           .timeline-ticks { position: absolute; top: 50%; left: 0; width: 100%; height: 100%; pointer-events: none; }
-          .timeline-tick { position: absolute; top: -1cqi; width: 0.2cqi; height: 2.4cqi; background: rgba(255,255,255,0.3); }
-          .timeline-tick-label { position: absolute; top: 2.5cqi; transform: translateX(-50%); font-size: 1.6cqi; color: #9CA3AF; }
+          .timeline-tick { position: absolute; top: -1cqi; width: 0.2cqi; height: 2.4cqi; background: rgba(0,0,0,0.2); }
+          .dark .timeline-tick { background: rgba(255,255,255,0.3); }
+          
+          .timeline-tick-label { position: absolute; top: 2.5cqi; transform: translateX(-50%); font-size: 1.6cqi; color: #6B7280; }
+          .dark .timeline-tick-label { color: #9CA3AF; }
+          
           .timeline-item { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; }
-          .timeline-dot { width: 1.8cqi; height: 1.8cqi; border-radius: 50%; box-shadow: 0 0 10px currentColor; border: 0.3cqi solid #0B132B; background: currentColor; }
-          .timeline-label-box { position: absolute; width: 22cqi; padding: 0.8cqi 1cqi; border-radius: 0.6cqi; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.1); font-size: 1.6cqi; text-align: center; color: white; word-break: break-all; white-space: normal; }
+          
+          .timeline-dot { width: 1.8cqi; height: 1.8cqi; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 0.3cqi solid #FFF; background: currentColor; }
+          .dark .timeline-dot { box-shadow: 0 0 10px currentColor; border-color: #0B132B; }
+          
+          .timeline-label-box { position: absolute; width: 22cqi; padding: 0.8cqi 1cqi; border-radius: 0.6cqi; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); font-size: 1.6cqi; text-align: center; color: #1F2937; word-break: break-all; white-space: normal; }
+          .dark .timeline-label-box { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border-color: rgba(255,255,255,0.1); box-shadow: none; color: white; }
+          
           .timeline-label-box.top { bottom: 3cqi; }
           .timeline-label-box.bottom { top: 3cqi; }
           .timeline-proj-name { font-weight: bold; font-size: 1.4cqi; margin-bottom: 0.2cqi; }
-          .timeline-month-title { font-size: 5cqi; font-weight: bold; color: white; text-align: center; margin-bottom: 2cqi; letter-spacing: 0.2cqi; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
-          .timeline-legend { display: flex; flex-wrap: wrap; gap: 1.5cqi; justify-content: center; margin-top: auto; padding: 1.5cqi; background: rgba(255,255,255,0.05); border-radius: 1cqi; border: 1px solid rgba(255,255,255,0.1); }
+          
+          .timeline-month-title { font-size: 5cqi; font-weight: bold; color: #111827; text-align: center; margin-bottom: 2cqi; letter-spacing: 0.2cqi; }
+          .dark .timeline-month-title { color: white; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+          
+          .timeline-legend { display: flex; flex-wrap: wrap; gap: 1.5cqi; justify-content: center; margin-top: auto; padding: 1.5cqi; background: rgba(0,0,0,0.03); border-radius: 1cqi; border: 1px solid rgba(0,0,0,0.05); }
+          .dark .timeline-legend { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+          
           .timeline-legend-item { display: flex; align-items: center; gap: 0.5cqi; font-size: 1.8cqi; }
           .timeline-legend-dot { width: 1.2cqi; height: 1.2cqi; border-radius: 50%; }
           
           /* Calendar UI */
-          .calendar-container { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.02); border-radius: 1.5cqi; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; margin-bottom: 2cqi; }
-          .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.1); }
-          .calendar-day-name { padding: 1cqi; text-align: center; font-weight: bold; font-size: 1.8cqi; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.1cqi; }
+          .calendar-container { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.5); border-radius: 1.5cqi; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 2cqi; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+          .dark .calendar-container { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); box-shadow: none; }
+          
+          .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: rgba(0,0,0,0.03); border-bottom: 1px solid rgba(0,0,0,0.05); }
+          .dark .calendar-header { background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.1); }
+          
+          .calendar-day-name { padding: 1cqi; text-align: center; font-weight: bold; font-size: 1.8cqi; color: #6B7280; text-transform: uppercase; letter-spacing: 0.1cqi; }
+          .dark .calendar-day-name { color: #9CA3AF; }
+          
           .calendar-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: 1fr; }
-          .calendar-cell { border-right: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0.5cqi; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+          
+          .calendar-cell { border-right: 1px solid rgba(0,0,0,0.05); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0.5cqi; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+          .dark .calendar-cell { border-color: rgba(255,255,255,0.05); }
+          
           .calendar-cell:nth-child(7n) { border-right: none; }
-          .calendar-cell.empty { background: rgba(0,0,0,0.1); }
-          .calendar-date-num { font-size: 2cqi; font-weight: bold; color: rgba(255,255,255,0.8); margin-bottom: 0.5cqi; }
+          
+          .calendar-cell.empty { background: rgba(0,0,0,0.02); }
+          .dark .calendar-cell.empty { background: rgba(0,0,0,0.1); }
+          
+          .calendar-date-num { font-size: 2cqi; font-weight: bold; color: rgba(0,0,0,0.6); margin-bottom: 0.5cqi; }
+          .dark .calendar-date-num { color: rgba(255,255,255,0.8); }
+          
           .calendar-task-list { display: flex; flex-direction: column; gap: 0.4cqi; overflow-y: auto; flex: 1; padding-right: 0.2cqi; }
-          .calendar-task-item { background: rgba(255,255,255,0.05); border-radius: 0.4cqi; padding: 0.4cqi 0.6cqi; font-size: 1.3cqi; color: white; display: flex; align-items: flex-start; gap: 0.4cqi; word-break: break-all; }
+          
+          .calendar-task-item { background: rgba(0,0,0,0.03); border-radius: 0.4cqi; padding: 0.4cqi 0.6cqi; font-size: 1.3cqi; color: #1F2937; display: flex; align-items: flex-start; gap: 0.4cqi; word-break: break-all; border: 1px solid rgba(0,0,0,0.05); }
+          .dark .calendar-task-item { background: rgba(255,255,255,0.05); color: white; border-color: transparent; }
+          
           .calendar-task-dot { width: 1cqi; height: 1cqi; border-radius: 50%; flex-shrink: 0; margin-top: 0.2cqi; }
 
-          .slide-page-num { position: absolute; bottom: 2cqi; right: 4cqi; font-size: 2cqi; color: #6B7280; font-family: monospace; }
-          .slide-watermark { position: absolute; top: 2cqi; right: 4cqi; font-size: 1.5cqi; color: #4B5563; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
+          .slide-page-num { position: absolute; bottom: 2cqi; right: 4cqi; font-size: 2cqi; color: #9CA3AF; font-family: monospace; }
+          .dark .slide-page-num { color: #6B7280; }
+          
+          .slide-watermark { position: absolute; top: 2cqi; right: 4cqi; font-size: 1.5cqi; color: #9CA3AF; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
+          .dark .slide-watermark { color: #4B5563; }
         `}} />
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }} className="no-print">
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', gap: '0.5rem' }} className="no-print">
+          <button 
+            className="btn" 
+            onClick={() => setIsDarkMode(!isDarkMode)} 
+            style={{ 
+              backgroundColor: isDarkMode ? '#374151' : '#E5E7EB',
+              color: isDarkMode ? '#F9FAFB' : '#111827',
+              boxShadow: 'var(--shadow-md)' 
+            }}
+          >
+            {isDarkMode ? '🌙 切換明亮模式' : '☀️ 切換深色模式'}
+          </button>
+          
           <button className="btn btn-primary" onClick={handleExportPDF} style={{ boxShadow: 'var(--shadow-md)', opacity: isExporting ? 0.7 : 1, cursor: isExporting ? 'not-allowed' : 'pointer' }} disabled={isExporting}>
             <Printer size={18} style={{ marginRight: '0.5rem' }}/> 
             {isExporting ? '正在產生 PDF...' : `直接匯出 PDF (${viewMode === 'presentation' ? '簡報格式' : '總表'})`}
