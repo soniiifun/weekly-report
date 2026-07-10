@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Printer, Save, CheckCircle2, Bot, LayoutDashboard, Table, ArrowRightCircle, Users } from 'lucide-react';
+import { Plus, Trash2, Printer, Save, CheckCircle2, Bot, LayoutDashboard, Table, ArrowRightCircle, Users, Clock } from 'lucide-react';
 import { ReportData, Project, Task, Milestones } from '../types';
 
 const defaultData: ReportData = {
@@ -630,6 +630,19 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-subtitle { font-size: 2.5cqi; color: #4B5563; text-align: center; margin-bottom: auto; margin-top: 1cqi; }
           .dark .slide-subtitle { color: #9CA3AF; }
 
+          .slide-content { display: flex; flex-direction: row; gap: 3cqi; flex: 1; min-height: 0; overflow: hidden; }
+          .slide-col { display: flex; flex-direction: column; overflow: hidden; }
+          .slide-col-title { font-size: 2.8cqi; font-weight: bold; color: #2563EB; margin-bottom: 1cqi; display: flex; align-items: center; gap: 0.5cqi; }
+          .dark .slide-col-title { color: #60A5FA; }
+          
+          .slide-tasks-container { overflow-y: visible; padding-right: 0.5cqi; display: grid; grid-template-columns: 1fr 1fr; gap: 1cqi; align-content: start; }
+          
+          .slide-task-card { background: #FFFFFF; border-radius: 0.8cqi; padding: 1.5cqi; border-left: 0.6cqi solid #3B82F6; border: 1px solid rgba(0,0,0,0.05); border-left-width: 0.6cqi; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+          .dark .slide-task-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); border-left-color: #3B82F6; box-shadow: none; }
+          
+          .slide-task-desc { font-size: 2.2cqi; color: #374151; white-space: pre-wrap; line-height: 1.6; }
+          .dark .slide-task-desc { color: #F3F4F6; }
+
           .slide-contact { margin-top: 1cqi; background: rgba(59,130,246,0.1); padding: 1cqi; border-radius: 0.8cqi; font-size: 2cqi; color: #2563EB; display: flex; flex-direction: column; gap: 0.4cqi; border: 1px solid rgba(59,130,246,0.2); }
           .dark .slide-contact { background: rgba(59,130,246,0.15); color: #93C5FD; border-color: rgba(59,130,246,0.2); }
           
@@ -963,6 +976,19 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                               ))}
                             </div>
                           </div>
+
+                          {/* Only show Next Week on the last part of a project (or if there's only 1 part) */}
+                          {slideData.part === slideData.totalParts && (
+                            <div className="slide-col" style={{ flex: '0 0 35%' }}>
+                              <div className="slide-col-title">
+                                <Clock size={16} />
+                                <span>下週預定</span>
+                              </div>
+                              <div className="slide-next-week">
+                                {slideData.project.nextWeekPlan || '無具體項目'}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     );
