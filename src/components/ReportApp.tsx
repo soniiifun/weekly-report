@@ -611,8 +611,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-col { display: flex; flex-direction: column; overflow: hidden; }
           .slide-col-title { font-size: 2.8cqi; font-weight: bold; color: #2563EB; margin-bottom: 1cqi; display: flex; align-items: center; gap: 0.5cqi; }
           .dark .slide-col-title { color: #60A5FA; }
-          
-          .slide-tasks-container { overflow-y: auto; padding-right: 0.5cqi; display: grid; grid-template-columns: repeat(auto-fill, minmax(30cqi, 1fr)); gap: 1.5cqi; align-content: start; width: 100%; }
+          .slide-tasks-container { overflow-y: hidden; padding-right: 0.5cqi; display: grid; grid-template-columns: repeat(auto-fill, minmax(30cqi, 1fr)); gap: 1.5cqi; align-content: start; width: 100%; }
           
           .slide-task-card { background: #FFFFFF; border-radius: 1.5cqi; padding: 2cqi; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: transform 0.2s; }
           .dark .slide-task-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); box-shadow: none; }
@@ -780,7 +779,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               const sortedMonths = Object.values(monthsData).sort((a, b) => a.month - b.month);
 
               // 2. Build Project Slides Data
-              const CHUNK_SIZE = 10;
+              const CHUNK_SIZE = 6; // Reduced from 10 to fit in slide without scrolling
               const slidesData: { project: Project; tasks: Task[]; part: number; totalParts: number }[] = [];
               
               data.projects.forEach(project => {
