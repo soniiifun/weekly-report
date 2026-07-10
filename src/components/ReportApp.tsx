@@ -825,12 +825,19 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     const titleColor = '#9CA3AF'; // match screenshot color for title
                     const cardBgColor = '#949CA6'; // match screenshot color for task block
                     
+                    const projIndex = data.projects.findIndex(p => p.id === slideData.project.id) + 1;
+                    const projNumberStr = projIndex.toString().padStart(2, '0');
+                    const projectColor = projColors[slideData.project.id] || '#4A5D4E';
+                    
                     return (
-                      <div key={`${slideData.project.id}-${slideData.part}`} className="slide">
-                        <div className="slide-page-num">{pageNum}</div>
-                        <div className="slide-watermark">Weekly Report</div>
+                      <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
+                        <div style={{ position: 'absolute', top: '-4cqi', left: '0cqi', fontSize: '30cqi', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'brightness(0.6)', zIndex: 0, opacity: 0.9, letterSpacing: '-2cqi' }}>
+                          {projNumberStr}
+                        </div>
+                        <div className="slide-page-num" style={{ zIndex: 1 }}>{pageNum}</div>
+                        <div className="slide-watermark" style={{ zIndex: 1 }}>Weekly Report</div>
                         
-                        <div className="slide-header">
+                        <div className="slide-header" style={{ position: 'relative', zIndex: 1 }}>
                           <h2 className="slide-title" style={{ color: '#000000', textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
                             {slideData.project.name}
                             {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: '1cqi' }}>(Part {slideData.part})</span>}
@@ -840,7 +847,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
                         </div>
                         
-                        <div className="slide-content">
+                        <div className="slide-content" style={{ position: 'relative', zIndex: 1 }}>
                           <div className="slide-col" style={{ flex: 1, width: '100%' }}>
                             <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '3.2cqi', marginBottom: '2cqi', color: titleColor }}>
                               <CheckCircle2 size={20} />
