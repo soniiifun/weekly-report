@@ -822,7 +822,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
                   {slidesData.map((slideData) => {
                     const pageNum = slideIndexCounter++;
-                    const projectColor = projColors[slideData.project.id] || '#3B82F6';
+                    const titleColor = '#9CA3AF'; // match screenshot color for title
+                    const cardBgColor = '#949CA6'; // match screenshot color for task block
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide">
@@ -830,7 +831,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         <div className="slide-watermark">Weekly Report</div>
                         
                         <div className="slide-header">
-                          <h2 className="slide-title" style={{ color: projectColor, textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                          <h2 className="slide-title" style={{ color: titleColor, textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
                             {slideData.project.name}
                             {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: '1cqi' }}>(Part {slideData.part})</span>}
                           </h2>
@@ -841,14 +842,14 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         
                         <div className="slide-content">
                           <div className="slide-col" style={{ flex: 1, width: '100%' }}>
-                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '3.2cqi', marginBottom: '2cqi', color: projectColor }}>
+                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '3.2cqi', marginBottom: '2cqi', color: titleColor }}>
                               <CheckCircle2 size={20} />
                               <span>工作項目</span>
                             </div>
                             <div className="slide-tasks-container">
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map(task => (
-                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: projectColor, color: '#FFFFFF', border: 'none' }}>
+                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: cardBgColor, color: '#FFFFFF', border: 'none' }}>
                                   <div className="slide-task-desc" style={{ color: '#FFFFFF' }}>{task.description || '(未填寫說明)'}</div>
                                   
                                   {task.hasContact && (
