@@ -617,10 +617,10 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-task-card { background: #FFFFFF; border-radius: 1.5cqi; padding: 2cqi; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: transform 0.2s; }
           .dark .slide-task-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); box-shadow: none; }
           
-          .slide-task-desc { font-size: 2.2cqi; color: #1F2937; white-space: pre-wrap; line-height: 1.6; font-weight: 500; }
+          .slide-task-desc { font-size: 3.0cqi; color: #1F2937; white-space: pre-wrap; line-height: 1.6; font-weight: 500; }
           .dark .slide-task-desc { color: #F3F4F6; }
 
-          .slide-contact { margin-top: 1cqi; background: rgba(59,130,246,0.1); padding: 1cqi; border-radius: 0.8cqi; font-size: 2cqi; color: #2563EB; display: flex; flex-direction: column; gap: 0.4cqi; border: 1px solid rgba(59,130,246,0.2); }
+          .slide-contact { margin-top: 1cqi; background: rgba(59,130,246,0.1); padding: 1cqi; border-radius: 0.8cqi; font-size: 2.8cqi; color: #2563EB; display: flex; flex-direction: column; gap: 0.4cqi; border: 1px solid rgba(59,130,246,0.2); }
           .dark .slide-contact { background: rgba(59,130,246,0.15); color: #93C5FD; border-color: rgba(59,130,246,0.2); }
           
           .slide-contact-row { display: flex; align-items: flex-start; gap: 0.5cqi; }
