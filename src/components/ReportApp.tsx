@@ -51,30 +51,6 @@ const getDaysInMonth = (month: number) => {
   return daysInMonth[month] || 30;
 };
 
-const generateCalendarGrid = (year: number, month: number) => {
-  const firstDay = new Date(year, month - 1, 1);
-  const numDays = new Date(year, month, 0).getDate();
-  let startDay = firstDay.getDay(); 
-  startDay = startDay === 0 ? 6 : startDay - 1; // Convert to Mon=0...Sun=6
-  
-  const grid: number[][] = [];
-  let currentWeek = Array(7).fill(0);
-  
-  let currentDay = 1;
-  for (let i = startDay; i < 7; i++) {
-    currentWeek[i] = currentDay++;
-  }
-  grid.push(currentWeek);
-  
-  while (currentDay <= numDays) {
-    currentWeek = Array(7).fill(0);
-    for (let i = 0; i < 7 && currentDay <= numDays; i++) {
-      currentWeek[i] = currentDay++;
-    }
-    grid.push(currentWeek);
-  }
-  return grid;
-};
 
 // Morandi Palette
 const PALETTE = ['#9EABAE', '#C4A49B', '#A4B29E', '#D4C4B7', '#9297A0', '#C3B5C6', '#D1B894'];
@@ -686,35 +662,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .timeline-legend-item { display: flex; align-items: center; gap: 0.5cqi; font-size: 1.8cqi; }
           .timeline-legend-dot { width: 1.2cqi; height: 1.2cqi; border-radius: 50%; }
           
-          /* Calendar UI */
-          .calendar-container { flex: 1; display: flex; flex-direction: column; background: rgba(255,255,255,0.5); border-radius: 1.5cqi; border: 1px solid rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 2cqi; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-          .dark .calendar-container { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); box-shadow: none; }
-          
-          .calendar-header { display: grid; grid-template-columns: repeat(7, 1fr); background: #3B4B61; border-bottom: 1px solid rgba(0,0,0,0.05); }
-          .dark .calendar-header { background: #1F2937; border-color: rgba(255,255,255,0.1); }
-          
-          .calendar-day-name { padding: 1cqi; text-align: center; font-weight: bold; font-size: 1.8cqi; color: #FFFFFF; letter-spacing: 0.1cqi; }
-          .dark .calendar-day-name { color: #E5E7EB; }
-          
-          .calendar-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(0, 1fr); }
-          
-          .calendar-cell { border-right: 1px solid rgba(0,0,0,0.05); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0.5cqi; position: relative; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
-          .dark .calendar-cell { border-color: rgba(255,255,255,0.05); }
-          
-          .calendar-cell:nth-child(7n) { border-right: none; }
-          
-          .calendar-cell.empty { background: rgba(0,0,0,0.02); }
-          .dark .calendar-cell.empty { background: rgba(0,0,0,0.1); }
-          
-          .calendar-date-num { font-size: 2cqi; font-weight: bold; color: #6B7280; margin-bottom: 0.5cqi; flex-shrink: 0; text-align: center; margin-top: 0.2cqi; }
-          .dark .calendar-date-num { color: rgba(255,255,255,0.8); }
-          
-          .calendar-task-list { display: flex; flex-direction: column; gap: 0.4cqi; overflow-y: auto; flex: 1; padding: 0.2cqi; min-height: 0; align-items: center; }
-          
-          .calendar-task-item { border-radius: 9999px; padding: 0.3cqi 0.8cqi; font-size: 1.3cqi; color: #FFFFFF; display: flex; align-items: center; justify-content: center; text-align: center; gap: 0.4cqi; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 95%; font-weight: 600; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-          .dark .calendar-task-item { border-color: transparent; }
-          
-          .calendar-task-dot { display: none; }
+
 
           .slide-page-num { position: absolute; bottom: 2cqi; right: 4cqi; font-size: 2cqi; color: #9CA3AF; font-family: monospace; }
           .dark .slide-page-num { color: #6B7280; }
@@ -864,65 +812,6 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     </div>
                   </div>
 
-                  {/* Part 2: Calendar Slides */}
-                  {sortedMonths.map((monthData) => {
-                    const activeProjects = Array.from(new Set(monthData.tasks.map(t => t.project)));
-                    const currentYear = new Date().getFullYear();
-                    const calendarGrid = generateCalendarGrid(currentYear, monthData.month);
-                    const pageNum = slideIndexCounter++;
-
-                    return (
-                      <div key={`cal-slide-${monthData.month}`} className="slide">
-                        <div className="slide-page-num">{pageNum}</div>
-                        <div className="slide-watermark">Weekly Report</div>
-                        <div className="timeline-month-title">{monthData.month}月 日曆總覽</div>
-                        
-                        <div className="calendar-container">
-                          <div className="calendar-header">
-                            {['一', '二', '三', '四', '五', '六', '日'].map(day => (
-                              <div key={day} className="calendar-day-name">{day}</div>
-                            ))}
-                          </div>
-                          <div className="calendar-grid">
-                            {calendarGrid.map((week, wIdx) => (
-                              week.map((dayNum, dIdx) => {
-                                if (dayNum === 0) {
-                                  return <div key={`empty-${wIdx}-${dIdx}`} className="calendar-cell empty"></div>;
-                                }
-                                
-                                const dayTasks = monthData.tasks.filter(t => t.day === dayNum);
-                                return (
-                                  <div key={`day-${dayNum}`} className="calendar-cell">
-                                    <div className="calendar-date-num">{dayNum}</div>
-                                    <div className="calendar-task-list">
-                                      {dayTasks.map(task => (
-                                        <div key={task.taskId} className="calendar-task-item" style={{ backgroundColor: task.color }}>
-                                          <span>{task.description}</span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                );
-                              })
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="timeline-legend">
-                          {activeProjects.map(projName => {
-                            const proj = data.projects.find(p => p.name === projName);
-                            const color = proj ? projColors[proj.id] : '#fff';
-                            return (
-                              <div key={`cal-legend-${projName}`} className="timeline-legend-item">
-                                <div className="timeline-legend-dot" style={{ backgroundColor: color }}></div>
-                                <span>{projName}</span>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
 
                   {/* Part 3: Project Content Slides */}
                   {data.projects.length === 0 && (
