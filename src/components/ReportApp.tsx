@@ -101,12 +101,12 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
   const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
   
   return (
-    <div className="mini-calendar" style={{ width: '85%', fontSize: '1.5cqi', margin: '0' }}>
-      <div style={{ fontWeight: 'bold', fontSize: '2.2cqi', marginBottom: '1.2cqi', color: '#111827', textAlign: 'left', paddingLeft: '0.5cqi' }}>
+    <div className="mini-calendar" style={{ width: '85%', fontSize: 'calc(1.5 * var(--cqi-unit))', margin: '0' }}>
+      <div style={{ fontWeight: 'bold', fontSize: 'calc(2.2 * var(--cqi-unit))', marginBottom: 'calc(1.2 * var(--cqi-unit))', color: '#111827', textAlign: 'left', paddingLeft: 'calc(0.5 * var(--cqi-unit))' }}>
         {month} 月
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.2cqi', textAlign: 'center' }}>
-        {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: 'bold', fontSize: '1.4cqi' }}>{d}</div>)}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'calc(0.2 * var(--cqi-unit))', textAlign: 'center' }}>
+        {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: 'bold', fontSize: 'calc(1.4 * var(--cqi-unit))' }}>{d}</div>)}
         {days.map((d, i) => {
           if (!d) return <div key={`empty-${i}`}></div>;
           const isActive = activeDays.includes(d);
@@ -137,13 +137,13 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
               color: textColor,
               borderRadius: '50%',
               fontWeight: fontWeight,
-              fontSize: '1.5cqi',
+              fontSize: 'calc(1.5 * var(--cqi-unit))',
               opacity: isActive || isMilestone ? 0.9 : 0.8,
               position: 'relative'
             }}>
-              <span style={{ position: 'relative', top: isToday ? '-0.2cqi' : '0' }}>{d}</span>
+              <span style={{ position: 'relative', top: isToday ? '-calc(0.2 * var(--cqi-unit))' : '0' }}>{d}</span>
               {isToday && (
-                <div style={{ position: 'absolute', bottom: '0.4cqi', width: '0.5cqi', height: '0.5cqi', backgroundColor: (isActive || isMilestone) ? '#FFFFFF' : '#EF4444', borderRadius: '50%' }}></div>
+                <div style={{ position: 'absolute', bottom: 'calc(0.4 * var(--cqi-unit))', width: 'calc(0.5 * var(--cqi-unit))', height: 'calc(0.5 * var(--cqi-unit))', backgroundColor: (isActive || isMilestone) ? '#FFFFFF' : '#EF4444', borderRadius: '50%' }}></div>
               )}
             </div>
           );
@@ -704,7 +704,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
       </div>
 
       {/* Report Preview Section */}
-      <div className="report-preview-container" style={isWebFullscreen ? {
+      <div className={`report-preview-container ${isWebFullscreen ? "fullscreen-mode" : ""}`} style={isWebFullscreen ? {
         position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999,
         backgroundColor: '#000', padding: '2rem', overflowY: 'auto', margin: 0, borderRadius: 0
       } : { backgroundColor: '#E5E7EB', padding: '1rem', borderRadius: '0.5rem', height: '100vh', overflowY: 'auto' }}>
@@ -712,7 +712,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
       {isWebFullscreen && (
         <button 
           onClick={() => setIsWebFullscreen(false)}
-          style={{ position: 'fixed', top: '2rem', right: '2rem', zIndex: 10000, padding: '0.75rem 1.5rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.5rem', cursor: 'pointer', backdropFilter: 'blur(10px)', fontSize: '1rem', fontWeight: 'bold' }}
+          style={{ position: 'fixed', top: '2rem', right: '2rem', zIndex: 10000, padding: '0.75rem 1.5rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.5rem', cursor: 'pointer', /* removed backdrop-filter */ fontSize: '1rem', fontWeight: 'bold' }}
         >
           ❌ 退出全螢幕 (ESC)
         </button>
@@ -722,14 +722,20 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           return (
             <React.Fragment>
               <style dangerouslySetInnerHTML={{__html: `
-                .slides-container { display: flex; flex-direction: column; gap: 2rem; }
+                
+          :root { --cqi-unit: 0.45vw; }
+          .fullscreen-mode { --cqi-unit: 0.95vw; }
+          @media (max-width: 1024px) { :root { --cqi-unit: 0.9vw; } }
+          
+          .slides-container { display: flex; flex-direction: column; gap: 2rem; }
+
           .slide {
             background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
             border-radius: 1rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            padding: 4cqi 4cqi 1cqi 4cqi;
+            padding: calc(4 * var(--cqi-unit)) calc(4 * var(--cqi-unit)) calc(1 * var(--cqi-unit)) calc(4 * var(--cqi-unit));
             aspect-ratio: 16 / 9;
-            container-type: inline-size;
+            /* removed container-type */
             position: relative;
             overflow: hidden;
             display: flex;
@@ -746,75 +752,75 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             color: white;
           }
 
-          .slide-title { font-size: 4.2cqi; font-weight: 800; color: #111827; text-align: center; margin-top: auto; letter-spacing: 0.2cqi; }
+          .slide-title { font-size: calc(4.2 * var(--cqi-unit)); font-weight: 800; color: #111827; text-align: center; margin-top: auto; letter-spacing: calc(0.2 * var(--cqi-unit)); }
           .dark .slide-title { color: white; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
 
-          .cover-box { text-align: center; border: 0.2cqi solid rgba(0,0,0,0.05); padding: 5cqi; border-radius: 2cqi; background: rgba(0,0,0,0.02); backdrop-filter: blur(10px); }
+          .cover-box { text-align: center; border: calc(0.2 * var(--cqi-unit)) solid rgba(0,0,0,0.05); padding: calc(5 * var(--cqi-unit)); border-radius: calc(2 * var(--cqi-unit)); background: rgba(0,0,0,0.02); /* removed backdrop-filter */ }
           .dark .cover-box { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
           
-          .slide-subtitle { font-size: 2.5cqi; color: #4B5563; text-align: center; margin-bottom: auto; margin-top: 1cqi; }
+          .slide-subtitle { font-size: calc(2.5 * var(--cqi-unit)); color: #4B5563; text-align: center; margin-bottom: auto; margin-top: calc(1 * var(--cqi-unit)); }
           .dark .slide-subtitle { color: #9CA3AF; }
 
-          .slide-content { display: flex; flex-direction: row; gap: 3cqi; flex: 1; min-height: 0; overflow: hidden; }
+          .slide-content { display: flex; flex-direction: row; gap: calc(3 * var(--cqi-unit)); flex: 1; min-height: 0; overflow: hidden; }
           .slide-col { display: flex; flex-direction: column; overflow: hidden; }
-          .slide-col-title { font-size: 2.8cqi; font-weight: bold; color: #2563EB; margin-bottom: 1cqi; display: flex; align-items: center; gap: 0.5cqi; }
+          .slide-col-title { font-size: calc(2.8 * var(--cqi-unit)); font-weight: bold; color: #2563EB; margin-bottom: calc(1 * var(--cqi-unit)); display: flex; align-items: center; gap: calc(0.5 * var(--cqi-unit)); }
           .dark .slide-col-title { color: #60A5FA; }
-          .slide-tasks-container { overflow-y: hidden; padding-right: 0.5cqi; display: grid; grid-template-columns: repeat(auto-fill, minmax(30cqi, 1fr)); gap: 1.5cqi; align-content: start; width: 100%; }
+          .slide-tasks-container { overflow-y: hidden; padding-right: calc(0.5 * var(--cqi-unit)); display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(30 * var(--cqi-unit)), 1fr)); gap: calc(1.5 * var(--cqi-unit)); align-content: start; width: 100%; }
           
-          .slide-task-card { background: #FFFFFF; border-radius: 1.5cqi; padding: 2cqi; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: transform 0.2s; }
+          .slide-task-card { background: #FFFFFF; border-radius: calc(1.5 * var(--cqi-unit)); padding: calc(2 * var(--cqi-unit)); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: transform 0.2s; }
           .dark .slide-task-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); box-shadow: none; }
           
-          .slide-task-desc { font-size: 2.6cqi; color: #1F2937; white-space: pre-wrap; line-height: 1.6; font-weight: 500; }
+          .slide-task-desc { font-size: calc(2.6 * var(--cqi-unit)); color: #1F2937; white-space: pre-wrap; line-height: 1.6; font-weight: 500; }
           .dark .slide-task-desc { color: #F3F4F6; }
 
-          .slide-contact { margin-top: 1cqi; background: rgba(59,130,246,0.1); padding: 1cqi; border-radius: 0.8cqi; font-size: 2.4cqi; color: #2563EB; display: flex; flex-direction: column; gap: 0.4cqi; border: 1px solid rgba(59,130,246,0.2); }
+          .slide-contact { margin-top: calc(1 * var(--cqi-unit)); background: rgba(59,130,246,0.1); padding: calc(1 * var(--cqi-unit)); border-radius: calc(0.8 * var(--cqi-unit)); font-size: calc(2.4 * var(--cqi-unit)); color: #2563EB; display: flex; flex-direction: column; gap: calc(0.4 * var(--cqi-unit)); border: 1px solid rgba(59,130,246,0.2); }
           .dark .slide-contact { background: rgba(59,130,246,0.15); color: #93C5FD; border-color: rgba(59,130,246,0.2); }
           
-          .slide-contact-row { display: flex; align-items: flex-start; gap: 0.5cqi; }
+          .slide-contact-row { display: flex; align-items: flex-start; gap: calc(0.5 * var(--cqi-unit)); }
           
-          .slide-next-week { background: rgba(0,0,0,0.02); border: 0.2cqi dashed rgba(0,0,0,0.15); border-radius: 1.5cqi; padding: 2cqi; font-size: 2.8cqi; color: #4B5563; white-space: pre-wrap; line-height: 1.7; flex: 1; overflow: hidden; }
+          .slide-next-week { background: rgba(0,0,0,0.02); border: calc(0.2 * var(--cqi-unit)) dashed rgba(0,0,0,0.15); border-radius: calc(1.5 * var(--cqi-unit)); padding: calc(2 * var(--cqi-unit)); font-size: calc(2.8 * var(--cqi-unit)); color: #4B5563; white-space: pre-wrap; line-height: 1.7; flex: 1; overflow: hidden; }
           .dark .slide-next-week { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.15); color: #D1D5DB; }
           
           /* Timeline UI */
-          .timeline-container { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; margin: 5cqi 0; }
+          .timeline-container { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; margin: calc(5 * var(--cqi-unit)) 0; }
           
-          .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: 0.4cqi; background: #E5E7EB; border-radius: 1cqi; transform: translateY(-50%); }
+          .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: calc(0.4 * var(--cqi-unit)); background: #E5E7EB; border-radius: calc(1 * var(--cqi-unit)); transform: translateY(-50%); }
           .dark .timeline-line { background: rgba(255,255,255,0.2); }
           
           .timeline-ticks { position: absolute; top: 50%; left: 0; width: 100%; height: 100%; pointer-events: none; }
-          .timeline-tick { position: absolute; top: -1cqi; width: 0.2cqi; height: 2.4cqi; background: rgba(0,0,0,0.2); }
+          .timeline-tick { position: absolute; top: -calc(1 * var(--cqi-unit)); width: calc(0.2 * var(--cqi-unit)); height: calc(2.4 * var(--cqi-unit)); background: rgba(0,0,0,0.2); }
           .dark .timeline-tick { background: rgba(255,255,255,0.3); }
           
-          .timeline-tick-label { position: absolute; top: 2.5cqi; transform: translateX(-50%); font-size: 1.6cqi; color: #6B7280; }
+          .timeline-tick-label { position: absolute; top: calc(2.5 * var(--cqi-unit)); transform: translateX(-50%); font-size: calc(1.6 * var(--cqi-unit)); color: #6B7280; }
           .dark .timeline-tick-label { color: #9CA3AF; }
           
           .timeline-item { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; }
           
-          .timeline-dot { width: 1.8cqi; height: 1.8cqi; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 0.3cqi solid #FFF; background: currentColor; }
+          .timeline-dot { width: calc(1.8 * var(--cqi-unit)); height: calc(1.8 * var(--cqi-unit)); border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: calc(0.3 * var(--cqi-unit)) solid #FFF; background: currentColor; }
           .dark .timeline-dot { box-shadow: 0 0 10px currentColor; border-color: #0B132B; }
           
-          .timeline-label-box { position: absolute; width: 22cqi; padding: 0.8cqi 1cqi; border-radius: 0.6cqi; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); font-size: 1.6cqi; text-align: center; color: #1F2937; word-break: break-all; white-space: normal; }
-          .dark .timeline-label-box { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border-color: rgba(255,255,255,0.1); box-shadow: none; color: white; }
+          .timeline-label-box { position: absolute; width: calc(22 * var(--cqi-unit)); padding: calc(0.8 * var(--cqi-unit)) calc(1 * var(--cqi-unit)); border-radius: calc(0.6 * var(--cqi-unit)); background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); font-size: calc(1.6 * var(--cqi-unit)); text-align: center; color: #1F2937; word-break: break-all; white-space: normal; }
+          .dark .timeline-label-box { background: rgba(0,0,0,0.6); /* removed backdrop-filter */ border-color: rgba(255,255,255,0.1); box-shadow: none; color: white; }
           
-          .timeline-label-box.top { bottom: 3cqi; }
-          .timeline-label-box.bottom { top: 3cqi; }
-          .timeline-proj-name { font-weight: bold; font-size: 1.4cqi; margin-bottom: 0.2cqi; }
+          .timeline-label-box.top { bottom: calc(3 * var(--cqi-unit)); }
+          .timeline-label-box.bottom { top: calc(3 * var(--cqi-unit)); }
+          .timeline-proj-name { font-weight: bold; font-size: calc(1.4 * var(--cqi-unit)); margin-bottom: calc(0.2 * var(--cqi-unit)); }
           
-          .timeline-month-title { font-size: 5cqi; font-weight: bold; color: #111827; text-align: center; margin-bottom: 2cqi; letter-spacing: 0.2cqi; }
+          .timeline-month-title { font-size: calc(5 * var(--cqi-unit)); font-weight: bold; color: #111827; text-align: center; margin-bottom: calc(2 * var(--cqi-unit)); letter-spacing: calc(0.2 * var(--cqi-unit)); }
           .dark .timeline-month-title { color: white; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
           
-          .timeline-legend { display: flex; flex-wrap: wrap; gap: 1.5cqi; justify-content: center; margin-top: auto; padding: 1.5cqi; background: rgba(0,0,0,0.03); border-radius: 1cqi; border: 1px solid rgba(0,0,0,0.05); }
+          .timeline-legend { display: flex; flex-wrap: wrap; gap: calc(1.5 * var(--cqi-unit)); justify-content: center; margin-top: auto; padding: calc(1.5 * var(--cqi-unit)); background: rgba(0,0,0,0.03); border-radius: calc(1 * var(--cqi-unit)); border: 1px solid rgba(0,0,0,0.05); }
           .dark .timeline-legend { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
           
-          .timeline-legend-item { display: flex; align-items: center; gap: 0.5cqi; font-size: 1.8cqi; }
-          .timeline-legend-dot { width: 1.2cqi; height: 1.2cqi; border-radius: 50%; }
+          .timeline-legend-item { display: flex; align-items: center; gap: calc(0.5 * var(--cqi-unit)); font-size: calc(1.8 * var(--cqi-unit)); }
+          .timeline-legend-dot { width: calc(1.2 * var(--cqi-unit)); height: calc(1.2 * var(--cqi-unit)); border-radius: 50%; }
           
 
 
-          .slide-page-num { position: absolute; bottom: 2cqi; right: 4cqi; font-size: 2cqi; color: #9CA3AF; font-family: monospace; }
+          .slide-page-num { position: absolute; bottom: calc(2 * var(--cqi-unit)); right: calc(4 * var(--cqi-unit)); font-size: calc(2 * var(--cqi-unit)); color: #9CA3AF; font-family: monospace; }
           .dark .slide-page-num { color: #6B7280; }
           
-          .slide-watermark { position: absolute; top: 2cqi; right: 4cqi; font-size: 1.5cqi; color: #9CA3AF; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
+          .slide-watermark { position: absolute; top: calc(2 * var(--cqi-unit)); right: calc(4 * var(--cqi-unit)); font-size: calc(1.5 * var(--cqi-unit)); color: #9CA3AF; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
           .dark .slide-watermark { color: #4B5563; }
 
         `}} />
@@ -1046,8 +1052,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                   {/* Part 1: Title Slide */}
                   <div className="slide" style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <div className="cover-box">
-                      <h1 className="slide-title" style={{ fontSize: '8cqi', margin: '0 0 2cqi 0' }}>每週工作匯報</h1>
-                      <div className="slide-subtitle" style={{ fontSize: '3.5cqi', marginBottom: '3cqi', marginTop: 0 }}>{data.employeeName || 'Sonia'}</div>
+                      <h1 className="slide-title" style={{ fontSize: 'calc(8 * var(--cqi-unit))', margin: '0 0 calc(2 * var(--cqi-unit)) 0' }}>每週工作匯報</h1>
+                      <div className="slide-subtitle" style={{ fontSize: 'calc(3.5 * var(--cqi-unit))', marginBottom: 'calc(3 * var(--cqi-unit))', marginTop: 0 }}>{data.employeeName || 'Sonia'}</div>
                     </div>
                   </div>
 
@@ -1070,34 +1076,34 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: '-1cqi', left: '0cqi', fontSize: '15cqi', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'brightness(0.6)', zIndex: 0, opacity: 0.9, letterSpacing: '-1cqi' }}>
+                        <div style={{ position: 'absolute', top: '-calc(1 * var(--cqi-unit))', left: 'calc(0 * var(--cqi-unit))', fontSize: 'calc(15 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'brightness(0.6)', zIndex: 0, opacity: 0.9, letterSpacing: '-calc(1 * var(--cqi-unit))' }}>
                           {projNumberStr}
                         </div>
                         <div className="slide-page-num" style={{ zIndex: 1 }}>{pageNum}</div>
                         <div className="slide-watermark" style={{ zIndex: 1 }}>Weekly Report</div>
                         
-                        <div className="slide-header" style={{ position: 'relative', zIndex: 1, marginTop: '-3cqi' }}>
+                        <div className="slide-header" style={{ position: 'relative', zIndex: 1, marginTop: '-calc(3 * var(--cqi-unit))' }}>
                           <h2 className="slide-title" style={{ color: '#000000', textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
                             {slideData.project.name}
-                            {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: '1cqi' }}>(Part {slideData.part})</span>}
+                            {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: 'calc(1 * var(--cqi-unit))' }}>(Part {slideData.part})</span>}
                           </h2>
-                          <div className="slide-meta" style={{ fontSize: '2cqi', color: '#6B7280', marginTop: '1cqi' }}>
+                          <div className="slide-meta" style={{ fontSize: 'calc(2 * var(--cqi-unit))', color: '#6B7280', marginTop: 'calc(1 * var(--cqi-unit))' }}>
                             {data.employeeName}{data.employeeName && data.department ? ' | ' : ''}{data.department}
                           </div>
                         </div>
                         
-                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: '1cqi', marginLeft: '-2cqi', marginTop: '-2cqi', overflow: 'visible' }}>
+                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: 'calc(1 * var(--cqi-unit))', marginLeft: '-calc(2 * var(--cqi-unit))', marginTop: '-calc(2 * var(--cqi-unit))', overflow: 'visible' }}>
                           
-                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center' }}>
+                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(2 * var(--cqi-unit))', justifyContent: 'center' }}>
                             <MiniCalendar year={slideData.slideYear} month={slideData.slideMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
-                              <div className="milestones-list" style={{ marginTop: '-0.5cqi', marginLeft: '-2cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi' }}>
-                                <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: '1cqi' }}>重要時程</div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: '0.5cqi', rowGap: '0.6cqi' }}>
+                              <div className="milestones-list" style={{ marginTop: '-calc(0.5 * var(--cqi-unit))', marginLeft: '-calc(2 * var(--cqi-unit))', padding: 'calc(1.5 * var(--cqi-unit))', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 'calc(0.8 * var(--cqi-unit))', fontSize: 'calc(1.4 * var(--cqi-unit))' }}>
+                                <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: 'calc(1 * var(--cqi-unit))' }}>重要時程</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: 'calc(0.5 * var(--cqi-unit))', rowGap: 'calc(0.6 * var(--cqi-unit))' }}>
                                   {slideData.milestoneList.map((m, idx) => (
-                                    <div key={idx} style={{ display: 'flex', gap: '0.5cqi', alignItems: 'flex-start' }}>
-                                      <div style={{ width: '0.8cqi', height: '0.8cqi', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0, marginTop: '0.4cqi' }}></div>
+                                    <div key={idx} style={{ display: 'flex', gap: 'calc(0.5 * var(--cqi-unit))', alignItems: 'flex-start' }}>
+                                      <div style={{ width: 'calc(0.8 * var(--cqi-unit))', height: 'calc(0.8 * var(--cqi-unit))', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0, marginTop: 'calc(0.4 * var(--cqi-unit))' }}></div>
                                       <span style={{ color: '#4B5563', fontWeight: 'bold', lineHeight: '1.2' }}>{m.label}：{m.value}</span>
                                     </div>
                                   ))}
@@ -1107,15 +1113,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
 
                           <div className="slide-col" style={{ flex: 1, width: '100%', overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '2.4cqi', marginBottom: '2cqi', color: titleColor }}>
+                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: 'calc(2.4 * var(--cqi-unit))', marginBottom: 'calc(2 * var(--cqi-unit))', color: titleColor }}>
                               <CheckCircle2 size={20} />
                               <span>工作項目</span>
                             </div>
-                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '0.2cqi', overflowY: 'hidden' }}>
-                              {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi', textAlign: 'center', width: '100%' }}>無具體項目</p>}
+                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(0.2 * var(--cqi-unit))', overflowY: 'hidden' }}>
+                              {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: 'calc(1.8 * var(--cqi-unit))', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map(task => (
-                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: '0.2cqi 0', boxShadow: 'none', display: 'flex', gap: '1.5cqi', alignItems: 'flex-start' }}>
-                                  <div style={{ marginTop: '0.8cqi', width: '1.2cqi', height: '1.2cqi', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0 }}></div>
+                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: 'calc(0.2 * var(--cqi-unit)) 0', boxShadow: 'none', display: 'flex', gap: 'calc(1.5 * var(--cqi-unit))', alignItems: 'flex-start' }}>
+                                  <div style={{ marginTop: 'calc(0.8 * var(--cqi-unit))', width: 'calc(1.2 * var(--cqi-unit))', height: 'calc(1.2 * var(--cqi-unit))', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0 }}></div>
                                   <div style={{ flex: 1 }}>
                                     <div className="slide-task-desc" style={{ color: '#1F2937' }}>
                                       {task.link ? (
@@ -1128,11 +1134,11 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                     </div>
                                   
                                   {task.hasContact && (
-                                    <div className="slide-contact" style={{ backgroundColor: 'transparent', border: 'none', padding: '0 0 0 1cqi', borderLeft: '2px solid rgba(0,0,0,0.1)', color: '#4B5563', gap: '0.2cqi' }}>
+                                    <div className="slide-contact" style={{ backgroundColor: 'transparent', border: 'none', padding: '0 0 0 calc(1 * var(--cqi-unit))', borderLeft: '2px solid rgba(0,0,0,0.1)', color: '#4B5563', gap: 'calc(0.2 * var(--cqi-unit))' }}>
                                       <div className="slide-contact-row">
                                         <span><strong>窗口：</strong>{task.contact?.person || '未指定'}</span>
                                       </div>
-                                      <div className="slide-contact-row" style={{ marginTop: '0.25cqi' }}>
+                                      <div className="slide-contact-row" style={{ marginTop: 'calc(0.25 * var(--cqi-unit))' }}>
                                         <span><strong>進度：</strong>{task.contact?.progress || '無進度說明'}</span>
                                       </div>
                                     </div>
@@ -1206,10 +1212,10 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                     x1={`${dotPos}%`} 
                                     y1="50%" 
                                     x2={`${labelPos}%`} 
-                                    y2={isTop ? "calc(50% - 3.5cqi)" : "calc(50% + 3.5cqi)"} 
+                                    y2={isTop ? "calc(50% - calc(3.5 * var(--cqi-unit)))" : "calc(50% + calc(3.5 * var(--cqi-unit)))"} 
                                     stroke={task.color} 
-                                    strokeWidth="0.2cqi" 
-                                    strokeDasharray="0.6cqi"
+                                    strokeWidth="calc(0.2 * var(--cqi-unit))" 
+                                    strokeDasharray="calc(0.6 * var(--cqi-unit))"
                                     opacity="0.6"
                                   />
                                 );
