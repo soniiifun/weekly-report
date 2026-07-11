@@ -241,6 +241,17 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
     }
   };
 
+  const handleFullscreen = () => {
+    const el = document.getElementById('presentation-slides');
+    if (el) {
+      if (el.requestFullscreen) {
+        el.requestFullscreen();
+      } else if ((el as any).webkitRequestFullscreen) {
+        (el as any).webkitRequestFullscreen();
+      }
+    }
+  };
+
   const handleExportPDF = async () => {
     if (viewMode === 'table') {
       window.print(); // Fallback for table view
@@ -791,6 +802,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           
           .slide-watermark { position: absolute; top: 2cqi; right: 4cqi; font-size: 1.5cqi; color: #9CA3AF; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
           .dark .slide-watermark { color: #4B5563; }
+          .slide-deck:-webkit-full-screen { background-color: #000; padding: 2rem; overflow-y: auto; height: 100vh; }
+          .slide-deck:fullscreen { background-color: #000; padding: 2rem; overflow-y: auto; height: 100vh; }
         `}} />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', gap: '0.5rem' }} className="no-print">
@@ -805,6 +818,12 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           >
             {isDarkMode ? '🌙 切換明亮模式' : '☀️ 切換深色模式'}
           </button>
+          
+          {viewMode === 'presentation' && (
+            <button className="btn" onClick={handleFullscreen} style={{ backgroundColor: '#10B981', color: 'white', boxShadow: 'var(--shadow-md)' }}>
+              🖥️ 全螢幕簡報
+            </button>
+          )}
           
           <button className="btn btn-primary" onClick={handleExportPDF} style={{ boxShadow: 'var(--shadow-md)', opacity: isExporting ? 0.7 : 1, cursor: isExporting ? 'not-allowed' : 'pointer' }} disabled={isExporting}>
             <Printer size={18} style={{ marginRight: '0.5rem' }}/> 
@@ -864,7 +883,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           </div>
         ) : (
           /* PRESENTATION MODE VIEW */
-          <div className="slide-deck">
+          <div className="slide-deck" id="presentation-slides">
             {(() => {
               // 1. Build Monthly Data for Calendar & Timeline
               const monthsData: Record<number, TimelineMonth> = {};
