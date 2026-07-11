@@ -162,7 +162,14 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
       }
     }
     setIsLoaded(true);
-  }, []);
+  }, [currentUser]);
+
+  // Auto-save data whenever it changes
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem(`weekly-report-data-${currentUser}`, JSON.stringify(data));
+    }
+  }, [data, isLoaded, currentUser]);
 
   const saveToLocal = () => {
     localStorage.setItem(`weekly-report-data-${currentUser}`, JSON.stringify(data));
