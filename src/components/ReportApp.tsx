@@ -90,7 +90,7 @@ interface ReportAppProps {
   currentUser?: string;
 }
 
-const MiniCalendar = ({ year, month, activeDays, color }: { year: number, month: number, activeDays: number[], color: string }) => {
+const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { year: number, month: number, activeDays: number[], milestoneDays?: number[], color: string }) => {
   const firstDay = new Date(year, month - 1, 1).getDay();
   const daysInMonth = new Date(year, month, 0).getDate();
   
@@ -110,21 +110,40 @@ const MiniCalendar = ({ year, month, activeDays, color }: { year: number, month:
         {days.map((d, i) => {
           if (!d) return <div key={`empty-${i}`}></div>;
           const isActive = activeDays.includes(d);
+          const isMilestone = milestoneDays.includes(d);
           const isToday = new Date().getFullYear() === year && (new Date().getMonth() + 1) === month && new Date().getDate() === d;
+          
+          let bgColor = 'transparent';
+          let textColor = '#111827';
+          let fontWeight = 'normal';
+          
+          if (isMilestone) {
+            bgColor = '#F59E0B'; // Amber/Orange
+            textColor = '#FFFFFF';
+            fontWeight = 'bold';
+          } else if (isActive) {
+            bgColor = color;
+            textColor = '#FFFFFF';
+            fontWeight = 'bold';
+          } else if (isToday) {
+            textColor = '#EF4444';
+            fontWeight = 'bold';
+          }
+
           return (
             <div key={d} style={{ 
               aspectRatio: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              backgroundColor: isActive ? color : 'transparent',
-              color: isActive ? '#FFFFFF' : (isToday ? '#EF4444' : '#111827'),
+              backgroundColor: bgColor,
+              color: textColor,
               borderRadius: '50%',
-              fontWeight: isActive || isToday ? 'bold' : 'normal',
+              fontWeight: fontWeight,
               fontSize: '1.5cqi',
-              opacity: isActive ? 0.9 : 0.8,
+              opacity: isActive || isMilestone ? 0.9 : 0.8,
               position: 'relative'
             }}>
               <span style={{ position: 'relative', top: isToday ? '-0.2cqi' : '0' }}>{d}</span>
               {isToday && (
-                <div style={{ position: 'absolute', bottom: '0.4cqi', width: '0.5cqi', height: '0.5cqi', backgroundColor: isActive ? '#FFFFFF' : '#EF4444', borderRadius: '50%' }}></div>
+                <div style={{ position: 'absolute', bottom: '0.4cqi', width: '0.5cqi', height: '0.5cqi', backgroundColor: (isActive || isMilestone) ? '#FFFFFF' : '#EF4444', borderRadius: '50%' }}></div>
               )}
             </div>
           );
@@ -861,10 +880,23 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
               // 2. Build Project Slides Data
               const CHUNK_SIZE = 6; // Reduced from 10 to fit in slide without scrolling
-              const slidesData: { project: Project; tasks: Task[]; part: number; totalParts: number; activeDays: number[] }[] = [];
+              const slidesData: { project: Project; tasks: Task[]; part: number; totalParts: number; activeDays: number[]; milestoneDays: {day: number, value: string}[] }[] = [];
               
               data.projects.forEach(project => {
                 const activeDays: number[] = [];
+                const milestoneDays: {day: number, value: string}[] = [];
+
+                if (project.milestones) {
+                  Object.entries(project.milestones).forEach(([key, value]) => {
+                    if (value && typeof value === 'string') {
+                      const dInfo = parseDate(value);
+                      if (dInfo && dInfo.month === reportMonth && !milestoneDays.some(m => m.day === dInfo.day)) {
+                        milestoneDays.push({ day: dInfo.day, value });
+                      }
+                    }
+                  });
+                }
+
                 project.tasks.forEach(task => {
                    const dInfo = parseDate(task.description);
                    if (dInfo && dInfo.month === reportMonth && !activeDays.includes(dInfo.day)) {
@@ -873,7 +905,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                 });
 
                 if (project.tasks.length === 0) {
-                  slidesData.push({ project, tasks: [], part: 1, totalParts: 1, activeDays });
+                  slidesData.push({ project, tasks: [], part: 1, totalParts: 1, activeDays, milestoneDays });
                 } else {
                   const totalParts = Math.ceil(project.tasks.length / CHUNK_SIZE);
                   for (let i = 0; i < project.tasks.length; i += CHUNK_SIZE) {
@@ -882,7 +914,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                       tasks: project.tasks.slice(i, i + CHUNK_SIZE),
                       part: Math.floor(i / CHUNK_SIZE) + 1,
                       totalParts,
-                      activeDays
+                      activeDays,
+                      milestoneDays
                     });
                   }
                 }
@@ -939,7 +972,19 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: '1cqi', marginLeft: '-2cqi' }}>
                           
                           <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center' }}>
-                            <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} color={projectColor} />
+                            <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays?.map(m => m.day) || []} color={projectColor} />
+                            
+                            {slideData.milestoneDays && slideData.milestoneDays.length > 0 && (
+                              <div className="milestones-list" style={{ marginTop: '2cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi', display: 'flex', flexDirection: 'column', gap: '0.8cqi' }}>
+                                <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: '0.5cqi' }}>📌 重要時程</div>
+                                {slideData.milestoneDays.map((m, idx) => (
+                                  <div key={idx} style={{ display: 'flex', gap: '1cqi', alignItems: 'flex-start' }}>
+                                    <div style={{ width: '0.8cqi', height: '0.8cqi', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0, marginTop: '0.4cqi' }}></div>
+                                    <span style={{ color: '#4B5563', fontWeight: 'bold' }}>{m.value}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
 
                           <div className="slide-col" style={{ flex: 1, width: '100%', overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
