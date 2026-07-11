@@ -565,6 +565,10 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                 <label style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#1E3A8A', marginBottom: '0.8rem', display: 'block' }}>重要時程</label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
                   <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>腳本、商攝清單</label>
+                    <input className="input-field" value={project.milestones?.scriptPhotoList || ''} onChange={e => updateMilestone(project.id, 'scriptPhotoList', e.target.value)} placeholder="如：8/10" />
+                  </div>
+                  <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>照片影片</label>
                     <input className="input-field" value={project.milestones?.filming || ''} onChange={e => updateMilestone(project.id, 'filming', e.target.value)} placeholder="如：8/15" />
                   </div>
@@ -913,6 +917,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               }[] = [];
               
               const milestoneLabels: Record<string, string> = {
+                scriptPhotoList: '腳本、商攝清單',
                 filming: '照片影片',
                 questionnaire: '問卷',
                 platformProposal: '平台提案',

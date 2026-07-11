@@ -11,6 +11,7 @@ export interface Task {
 }
 
 export interface Milestones {
+  scriptPhotoList?: string;
   filming?: string;
   questionnaire?: string;
   platformProposal?: string;
