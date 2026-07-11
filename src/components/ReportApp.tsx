@@ -110,17 +110,22 @@ const MiniCalendar = ({ year, month, activeDays, color }: { year: number, month:
         {days.map((d, i) => {
           if (!d) return <div key={`empty-${i}`}></div>;
           const isActive = activeDays.includes(d);
+          const isToday = new Date().getFullYear() === year && (new Date().getMonth() + 1) === month && new Date().getDate() === d;
           return (
             <div key={d} style={{ 
-              aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              aspectRatio: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               backgroundColor: isActive ? color : 'transparent',
-              color: isActive ? '#FFFFFF' : '#111827',
+              color: isActive ? '#FFFFFF' : (isToday ? '#EF4444' : '#111827'),
               borderRadius: '50%',
-              fontWeight: isActive ? 'bold' : 'normal',
+              fontWeight: isActive || isToday ? 'bold' : 'normal',
               fontSize: '1.5cqi',
-              opacity: isActive ? 0.9 : 0.8
+              opacity: isActive ? 0.9 : 0.8,
+              position: 'relative'
             }}>
-              {d}
+              <span style={{ position: 'relative', top: isToday ? '-0.2cqi' : '0' }}>{d}</span>
+              {isToday && (
+                <div style={{ position: 'absolute', bottom: '0.4cqi', width: '0.5cqi', height: '0.5cqi', backgroundColor: isActive ? '#FFFFFF' : '#EF4444', borderRadius: '50%' }}></div>
+              )}
             </div>
           );
         })}
