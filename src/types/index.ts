@@ -13,12 +13,14 @@ export interface Task {
 export interface Milestones {
   media?: string;
   questionnaire?: string;
+  platformProposal?: string;
   pageStructure?: string;
   salesPageDesign?: string;
   createSocials?: string;
   postContent?: string;
   launch?: string;
   factoryShipping?: string;
+  officialSiteLaunch?: string;
   shippingToCustomer?: string;
 }
 
