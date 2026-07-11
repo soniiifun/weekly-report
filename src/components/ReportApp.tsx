@@ -880,18 +880,29 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
               // 2. Build Project Slides Data
               const CHUNK_SIZE = 6; // Reduced from 10 to fit in slide without scrolling
-              const slidesData: { project: Project; tasks: Task[]; part: number; totalParts: number; activeDays: number[]; milestoneDays: {day: number, value: string}[] }[] = [];
+              const slidesData: { project: Project; tasks: Task[]; part: number; totalParts: number; activeDays: number[]; milestoneDays: number[]; milestoneList: {key: string, label: string, value: string}[] }[] = [];
               
+              const milestoneLabels: Record<string, string> = {
+                filming: '預計拍片',
+                questionnaire: '問卷',
+                salesPage: '銷售頁',
+                launch: '上線',
+                bulkArrival: '大貨',
+                shipping: '出貨'
+              };
+
               data.projects.forEach(project => {
                 const activeDays: number[] = [];
-                const milestoneDays: {day: number, value: string}[] = [];
+                const milestoneDays: number[] = [];
+                const milestoneList: {key: string, label: string, value: string}[] = [];
 
                 if (project.milestones) {
                   Object.entries(project.milestones).forEach(([key, value]) => {
                     if (value && typeof value === 'string') {
+                      milestoneList.push({ key, label: milestoneLabels[key] || key, value });
                       const dInfo = parseDate(value);
-                      if (dInfo && dInfo.month === reportMonth && !milestoneDays.some(m => m.day === dInfo.day)) {
-                        milestoneDays.push({ day: dInfo.day, value });
+                      if (dInfo && dInfo.month === reportMonth && !milestoneDays.includes(dInfo.day)) {
+                        milestoneDays.push(dInfo.day);
                       }
                     }
                   });
@@ -905,7 +916,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                 });
 
                 if (project.tasks.length === 0) {
-                  slidesData.push({ project, tasks: [], part: 1, totalParts: 1, activeDays, milestoneDays });
+                  slidesData.push({ project, tasks: [], part: 1, totalParts: 1, activeDays, milestoneDays, milestoneList });
                 } else {
                   const totalParts = Math.ceil(project.tasks.length / CHUNK_SIZE);
                   for (let i = 0; i < project.tasks.length; i += CHUNK_SIZE) {
@@ -915,7 +926,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                       part: Math.floor(i / CHUNK_SIZE) + 1,
                       totalParts,
                       activeDays,
-                      milestoneDays
+                      milestoneDays,
+                      milestoneList
                     });
                   }
                 }
@@ -972,15 +984,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: '1cqi', marginLeft: '-2cqi' }}>
                           
                           <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center' }}>
-                            <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays?.map(m => m.day) || []} color={projectColor} />
+                            <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
-                            {slideData.milestoneDays && slideData.milestoneDays.length > 0 && (
+                            {slideData.milestoneList && slideData.milestoneList.length > 0 && (
                               <div className="milestones-list" style={{ marginTop: '2cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi', display: 'flex', flexDirection: 'column', gap: '0.8cqi' }}>
                                 <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: '0.5cqi' }}>📌 重要時程</div>
-                                {slideData.milestoneDays.map((m, idx) => (
+                                {slideData.milestoneList.map((m, idx) => (
                                   <div key={idx} style={{ display: 'flex', gap: '1cqi', alignItems: 'flex-start' }}>
                                     <div style={{ width: '0.8cqi', height: '0.8cqi', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0, marginTop: '0.4cqi' }}></div>
-                                    <span style={{ color: '#4B5563', fontWeight: 'bold' }}>{m.value}</span>
+                                    <span style={{ color: '#4B5563', fontWeight: 'bold' }}>{m.label}：{m.value}</span>
                                   </div>
                                 ))}
                               </div>
