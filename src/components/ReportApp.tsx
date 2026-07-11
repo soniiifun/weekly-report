@@ -156,6 +156,7 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
 export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
   const [data, setData] = useState<ReportData>(defaultData);
   const [isLoaded, setIsLoaded] = useState(false);
+  const deferredData = React.useDeferredValue(data);
   const [saveStatus, setSaveStatus] = useState<string>('');
   const [viewMode, setViewMode] = useState<'table' | 'presentation'>('presentation');
   const [isExporting, setIsExporting] = useState(false);
@@ -691,9 +692,12 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
       {/* Report Preview Section */}
       <div className="report-preview-container" style={{ backgroundColor: '#E5E7EB', padding: '1rem', borderRadius: '0.5rem', height: '100vh', overflowY: 'auto' }}>
-        
-        <style dangerouslySetInnerHTML={{__html: `
-          .slides-container { display: flex; flex-direction: column; gap: 2rem; }
+        {React.useMemo(() => {
+          const data = deferredData;
+          return (
+            <React.Fragment>
+              <style dangerouslySetInnerHTML={{__html: `
+                .slides-container { display: flex; flex-direction: column; gap: 2rem; }
           .slide {
             background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
             border-radius: 1rem;
@@ -1220,6 +1224,9 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             })()}
           </div>
         )}
+            </React.Fragment>
+          );
+        }, [deferredData, viewMode, isDarkMode])}
       </div>
     </div>
   );
