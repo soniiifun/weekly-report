@@ -69,7 +69,7 @@ const getDaysInMonth = (month: number) => {
 
 
 // Morandi Palette
-const PALETTE = ['#5B8AB5', '#7A9EB1', '#A9C2D8', '#8FABC2', '#6C93B0', '#9DBBD1', '#4F7C9D'];
+const PALETTE = ['#5B84B1', '#6EB5C0', '#92A8D1', '#A5BCA3', '#E8C3A8', '#B5A6C2', '#7CA3A1'];
 
 interface TimelineTask {
   day: number;
@@ -494,7 +494,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slides-container { display: flex; flex-direction: column; gap: 2rem; }
 
           .slide {
-            background: #F4F7F9;
+            background: linear-gradient(to right, #FFFFFF 50%, #F0F4F8 50%);
             border-radius: 1rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             padding: calc(4 * var(--cqi-unit)) calc(4 * var(--cqi-unit)) calc(1 * var(--cqi-unit)) calc(4 * var(--cqi-unit));
@@ -508,12 +508,6 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             border: 1px solid rgba(0,0,0,0.05);
             color: #2C3E50;
             z-index: 1;
-          }
-          .slide::before {
-            content: ''; position: absolute; top: -10%; left: -5%; width: 60%; height: 80%; background: linear-gradient(135deg, #8FAECB 0%, transparent 100%); opacity: 0.25; z-index: 0; pointer-events: none; transform: skewX(-15deg); border-radius: 1rem;
-          }
-          .slide::after {
-            content: ''; position: absolute; bottom: -10%; right: -5%; width: 70%; height: 70%; background: linear-gradient(315deg, #4A769E 0%, transparent 100%); opacity: 0.2; z-index: 0; pointer-events: none; transform: skewX(-15deg); border-radius: 1rem;
           }
           
           .dark .slide {
