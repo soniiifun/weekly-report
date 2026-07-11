@@ -101,12 +101,12 @@ const MiniCalendar = ({ year, month, activeDays, color }: { year: number, month:
   const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
   
   return (
-    <div className="mini-calendar" style={{ width: '100%', fontSize: '1.8cqi' }}>
-      <div style={{ fontWeight: 'bold', fontSize: '2.5cqi', marginBottom: '1.5cqi', color: '#111827', textAlign: 'left', paddingLeft: '0.5cqi' }}>
+    <div className="mini-calendar" style={{ width: '85%', fontSize: '1.5cqi', margin: '0 auto' }}>
+      <div style={{ fontWeight: 'bold', fontSize: '2.2cqi', marginBottom: '1.2cqi', color: '#111827', textAlign: 'left', paddingLeft: '0.5cqi' }}>
         {month} 月
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5cqi', textAlign: 'center' }}>
-        {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: 'bold', fontSize: '1.6cqi' }}>{d}</div>)}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.2cqi', textAlign: 'center' }}>
+        {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: 'bold', fontSize: '1.4cqi' }}>{d}</div>)}
         {days.map((d, i) => {
           if (!d) return <div key={`empty-${i}`}></div>;
           const isActive = activeDays.includes(d);
@@ -117,7 +117,7 @@ const MiniCalendar = ({ year, month, activeDays, color }: { year: number, month:
               color: isActive ? '#FFFFFF' : '#111827',
               borderRadius: '50%',
               fontWeight: isActive ? 'bold' : 'normal',
-              fontSize: '1.8cqi',
+              fontSize: '1.5cqi',
               opacity: isActive ? 0.9 : 0.8
             }}>
               {d}
@@ -938,11 +938,13 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                             <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '1.5cqi', overflowY: 'hidden' }}>
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map(task => (
-                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: cardBgColor, color: '#FFFFFF', border: 'none' }}>
-                                  <div className="slide-task-desc" style={{ color: '#FFFFFF' }}>{task.description || '(未填寫說明)'}</div>
+                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: '1cqi 0', boxShadow: 'none', display: 'flex', gap: '1.5cqi', alignItems: 'flex-start' }}>
+                                  <div style={{ marginTop: '0.8cqi', width: '1.2cqi', height: '1.2cqi', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0 }}></div>
+                                  <div style={{ flex: 1 }}>
+                                    <div className="slide-task-desc" style={{ color: '#1F2937' }}>{task.description || '(未填寫說明)'}</div>
                                   
                                   {task.hasContact && (
-                                    <div className="slide-contact" style={{ backgroundColor: 'rgba(255,255,255,0.15)', borderColor: 'rgba(255,255,255,0.3)', color: '#FFFFFF' }}>
+                                    <div className="slide-contact" style={{ backgroundColor: 'rgba(0,0,0,0.02)', borderColor: 'rgba(0,0,0,0.05)', color: '#4B5563' }}>
                                       <div className="slide-contact-row">
                                         <Users style={{ flexShrink: 0, marginTop: '0.2cqi' }}/>
                                         <span><strong>窗口：</strong>{task.contact?.person || '未指定'}</span>
@@ -953,6 +955,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                       </div>
                                     </div>
                                   )}
+                                  </div>
                                 </div>
                               ))}
                             </div>
