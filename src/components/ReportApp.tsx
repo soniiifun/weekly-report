@@ -929,9 +929,9 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
                         </div>
                         
-                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '4fr 6fr', gap: '4cqi', marginLeft: '-2cqi' }}>
+                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: '1cqi', marginLeft: '-2cqi' }}>
                           
-                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center', paddingRight: '2cqi' }}>
+                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center' }}>
                             <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} color={projectColor} />
                           </div>
 
