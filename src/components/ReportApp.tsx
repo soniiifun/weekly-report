@@ -1047,7 +1047,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                             <MiniCalendar year={slideData.slideYear} month={slideData.slideMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
-                              <div className="milestones-list" style={{ marginTop: '1.5cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi' }}>
+                              <div className="milestones-list" style={{ marginTop: '-0.5cqi', marginLeft: '-2cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi' }}>
                                 <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: '1cqi' }}>重要時程</div>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: '0.5cqi', rowGap: '0.6cqi' }}>
                                   {slideData.milestoneList.map((m, idx) => (
