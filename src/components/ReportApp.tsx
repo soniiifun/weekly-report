@@ -940,10 +940,10 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                               <CheckCircle2 size={20} />
                               <span>工作項目</span>
                             </div>
-                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '1.5cqi', overflowY: 'hidden' }}>
+                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '0.8cqi', overflowY: 'hidden' }}>
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map(task => (
-                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: '1cqi 0', boxShadow: 'none', display: 'flex', gap: '1.5cqi', alignItems: 'flex-start' }}>
+                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: '0.5cqi 0', boxShadow: 'none', display: 'flex', gap: '1.5cqi', alignItems: 'flex-start' }}>
                                   <div style={{ marginTop: '0.8cqi', width: '1.2cqi', height: '1.2cqi', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0 }}></div>
                                   <div style={{ flex: 1 }}>
                                     <div className="slide-task-desc" style={{ color: '#1F2937' }}>{task.description || '(未填寫說明)'}</div>
