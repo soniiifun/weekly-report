@@ -1073,13 +1073,11 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                     <div className="slide-task-desc" style={{ color: '#1F2937' }}>{task.description || '(未填寫說明)'}</div>
                                   
                                   {task.hasContact && (
-                                    <div className="slide-contact" style={{ backgroundColor: 'rgba(0,0,0,0.02)', borderColor: 'rgba(0,0,0,0.05)', color: '#4B5563' }}>
+                                    <div className="slide-contact" style={{ backgroundColor: 'transparent', border: 'none', padding: '0 0 0 1cqi', borderLeft: '2px solid rgba(0,0,0,0.1)', color: '#4B5563', gap: '0.2cqi' }}>
                                       <div className="slide-contact-row">
-                                        <Users style={{ flexShrink: 0, marginTop: '0.2cqi' }}/>
                                         <span><strong>窗口：</strong>{task.contact?.person || '未指定'}</span>
                                       </div>
                                       <div className="slide-contact-row" style={{ marginTop: '0.25cqi' }}>
-                                        <ArrowRightCircle style={{ flexShrink: 0, marginTop: '0.2cqi' }}/>
                                         <span><strong>進度：</strong>{task.contact?.progress || '無進度說明'}</span>
                                       </div>
                                     </div>
