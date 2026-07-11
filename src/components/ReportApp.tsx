@@ -598,7 +598,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             color: white;
           }
 
-          .slide-title { font-size: 5cqi; font-weight: 800; color: #111827; text-align: center; margin-top: auto; letter-spacing: 0.2cqi; }
+          .slide-title { font-size: 4.2cqi; font-weight: 800; color: #111827; text-align: center; margin-top: auto; letter-spacing: 0.2cqi; }
           .dark .slide-title { color: white; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
 
           .cover-box { text-align: center; border: 0.2cqi solid rgba(0,0,0,0.05); padding: 5cqi; border-radius: 2cqi; background: rgba(0,0,0,0.02); backdrop-filter: blur(10px); }
@@ -616,10 +616,10 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-task-card { background: #FFFFFF; border-radius: 1.5cqi; padding: 2cqi; border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: transform 0.2s; }
           .dark .slide-task-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); box-shadow: none; }
           
-          .slide-task-desc { font-size: 3.0cqi; color: #1F2937; white-space: pre-wrap; line-height: 1.6; font-weight: 500; }
+          .slide-task-desc { font-size: 2.6cqi; color: #1F2937; white-space: pre-wrap; line-height: 1.6; font-weight: 500; }
           .dark .slide-task-desc { color: #F3F4F6; }
 
-          .slide-contact { margin-top: 1cqi; background: rgba(59,130,246,0.1); padding: 1cqi; border-radius: 0.8cqi; font-size: 2.8cqi; color: #2563EB; display: flex; flex-direction: column; gap: 0.4cqi; border: 1px solid rgba(59,130,246,0.2); }
+          .slide-contact { margin-top: 1cqi; background: rgba(59,130,246,0.1); padding: 1cqi; border-radius: 0.8cqi; font-size: 2.4cqi; color: #2563EB; display: flex; flex-direction: column; gap: 0.4cqi; border: 1px solid rgba(59,130,246,0.2); }
           .dark .slide-contact { background: rgba(59,130,246,0.15); color: #93C5FD; border-color: rgba(59,130,246,0.2); }
           
           .slide-contact-row { display: flex; align-items: flex-start; gap: 0.5cqi; }
@@ -848,7 +848,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         
                         <div className="slide-content" style={{ position: 'relative', zIndex: 1 }}>
                           <div className="slide-col" style={{ flex: 1, width: '100%' }}>
-                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '3.2cqi', marginBottom: '2cqi', color: titleColor }}>
+                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '2.4cqi', marginBottom: '2cqi', color: titleColor }}>
                               <CheckCircle2 size={20} />
                               <span>工作項目</span>
                             </div>
