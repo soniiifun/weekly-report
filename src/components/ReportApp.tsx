@@ -565,28 +565,40 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                 <label style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#1E3A8A', marginBottom: '0.8rem', display: 'block' }}>重要時程</label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
                   <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>預計拍片</label>
-                    <input className="input-field" value={project.milestones?.filming || ''} onChange={e => updateMilestone(project.id, 'filming', e.target.value)} placeholder="如：8/15" />
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>照片影片</label>
+                    <input className="input-field" value={project.milestones?.media || ''} onChange={e => updateMilestone(project.id, 'media', e.target.value)} placeholder="如：8/15" />
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>問卷</label>
                     <input className="input-field" value={project.milestones?.questionnaire || ''} onChange={e => updateMilestone(project.id, 'questionnaire', e.target.value)} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>銷售頁</label>
-                    <input className="input-field" value={project.milestones?.salesPage || ''} onChange={e => updateMilestone(project.id, 'salesPage', e.target.value)} />
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>頁面架構</label>
+                    <input className="input-field" value={project.milestones?.pageStructure || ''} onChange={e => updateMilestone(project.id, 'pageStructure', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>銷售頁設計</label>
+                    <input className="input-field" value={project.milestones?.salesPageDesign || ''} onChange={e => updateMilestone(project.id, 'salesPageDesign', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>創：FB、line</label>
+                    <input className="input-field" value={project.milestones?.createSocials || ''} onChange={e => updateMilestone(project.id, 'createSocials', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>發圖文：FB、line、EDM</label>
+                    <input className="input-field" value={project.milestones?.postContent || ''} onChange={e => updateMilestone(project.id, 'postContent', e.target.value)} />
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>上線</label>
                     <input className="input-field" value={project.milestones?.launch || ''} onChange={e => updateMilestone(project.id, 'launch', e.target.value)} />
                   </div>
                   <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>大貨</label>
-                    <input className="input-field" value={project.milestones?.bulkArrival || ''} onChange={e => updateMilestone(project.id, 'bulkArrival', e.target.value)} />
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>工廠出貨</label>
+                    <input className="input-field" value={project.milestones?.factoryShipping || ''} onChange={e => updateMilestone(project.id, 'factoryShipping', e.target.value)} />
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>出貨給客人</label>
-                    <input className="input-field" value={project.milestones?.shipping || ''} onChange={e => updateMilestone(project.id, 'shipping', e.target.value)} />
+                    <input className="input-field" value={project.milestones?.shippingToCustomer || ''} onChange={e => updateMilestone(project.id, 'shippingToCustomer', e.target.value)} />
                   </div>
                 </div>
               </div>
@@ -893,12 +905,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               }[] = [];
               
               const milestoneLabels: Record<string, string> = {
-                filming: '預計拍片',
+                media: '照片影片',
                 questionnaire: '問卷',
-                salesPage: '銷售頁',
+                pageStructure: '頁面架構',
+                salesPageDesign: '銷售頁設計',
+                createSocials: '創：FB、line',
+                postContent: '發圖文：FB、line、EDM',
                 launch: '上線',
-                bulkArrival: '大貨',
-                shipping: '出貨'
+                factoryShipping: '工廠出貨',
+                shippingToCustomer: '出貨給客人'
               };
 
               data.projects.forEach(project => {

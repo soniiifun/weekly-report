@@ -11,12 +11,15 @@ export interface Task {
 }
 
 export interface Milestones {
-  filming?: string;
+  media?: string;
   questionnaire?: string;
-  salesPage?: string;
+  pageStructure?: string;
+  salesPageDesign?: string;
+  createSocials?: string;
+  postContent?: string;
   launch?: string;
-  bulkArrival?: string;
-  shipping?: string;
+  factoryShipping?: string;
+  shippingToCustomer?: string;
 }
 
 export interface Project {
