@@ -885,7 +885,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
                           <div className="slide-col" style={{ flex: 1, width: '100%', overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
 
-                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(0.2 * var(--cqi-unit))', overflowY: 'hidden' }}>
+                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(0.2 * var(--cqi-unit))', overflowY: 'hidden', marginTop: 'calc(6 * var(--cqi-unit))' }}>
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: 'calc(1.8 * var(--cqi-unit))', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map(task => (
                                 <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: 'calc(0.2 * var(--cqi-unit)) 0', boxShadow: 'none', display: 'flex', gap: 'calc(1.5 * var(--cqi-unit))', alignItems: 'flex-start' }}>
