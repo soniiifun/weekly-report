@@ -482,242 +482,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
     }));
   };
 
-  if (!isLoaded) return null;
-
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }} className="responsive-grid">
-      {/* Editor Section (Hidden on Print) */}
-      <div className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxHeight: '100vh', overflowY: 'auto', paddingRight: '1rem', paddingBottom: '2rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>工作週報系統</h1>
-            <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span>個人專屬週報系統</span>
-            </div>
-          </div>
-          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            {saveStatus && <span style={{ fontSize: '0.875rem', color: 'green', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><CheckCircle2 size={16}/> {saveStatus}</span>}
-            <button 
-              onClick={() => {
-                if (window.confirm('確定要清除畫面上所有的專案草稿嗎？這會讓您擁有乾淨的版面重新匯入任務。')) {
-                  setData(prev => ({ ...prev, projects: [] }));
-                }
-              }} 
-              className="btn" 
-              style={{ backgroundColor: '#FEE2E2', color: '#EF4444', borderColor: '#FCA5A5' }}
-            >
-              🗑️ 清空所有草稿
-            </button>
-            <button className="btn" style={{ backgroundColor: '#10B981', color: 'white' }} onClick={handleImportFromLINE}>
-              📥 匯入 LINE 任務
-            </button>
-            <button className="btn" style={{ backgroundColor: '#3B82F6', color: 'white', fontWeight: 'bold', boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.5)' }} onClick={syncToLINE}>
-              🔄 雙向同步到 LINE
-            </button>
-            <button className="btn btn-primary" onClick={saveToLocal} style={{ boxShadow: 'var(--shadow-sm)' }}>
-              <Save size={18} style={{ marginRight: '0.5rem' }}/> 儲存進度
-            </button>
-            <button className="btn" style={{ backgroundColor: '#FEE2E2', color: '#B91C1C', border: '1px solid #FECACA' }} onClick={() => setData(defaultData)}>
-              <Trash2 size={18} style={{ marginRight: '0.5rem' }}/> 清空
-            </button>
-          </div>
-        </div>
-
-        {/* View Toggles */}
-        <div style={{ display: 'flex', gap: '0.5rem', backgroundColor: '#F3F4F6', padding: '0.5rem', borderRadius: '0.5rem' }}>
-          <button 
-            className="btn" 
-            style={{ flex: 1, backgroundColor: viewMode === 'presentation' ? 'white' : 'transparent', color: viewMode === 'presentation' ? 'var(--primary)' : '#6B7280', boxShadow: viewMode === 'presentation' ? 'var(--shadow-sm)' : 'none' }}
-            onClick={() => setViewMode('presentation')}
-          >
-            <LayoutDashboard size={18} style={{ marginRight: '0.5rem' }}/> PPT 簡報模式
-          </button>
-          <button 
-            className="btn" 
-            style={{ flex: 1, backgroundColor: viewMode === 'table' ? 'white' : 'transparent', color: viewMode === 'table' ? 'var(--primary)' : '#6B7280', boxShadow: viewMode === 'table' ? 'var(--shadow-sm)' : 'none' }}
-            onClick={() => setViewMode('table')}
-          >
-            <Table size={18} style={{ marginRight: '0.5rem' }}/> 總表模式
-          </button>
-        </div>
-
-        {/* General Info */}
-        <div className="card">
-          <h2>基本資訊</h2>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', marginTop: '1rem' }}>
-            <div>
-              <label>週報期間</label>
-              <input className="input-field" value={data.dateRange} onChange={e => updateGeneralInfo('dateRange', e.target.value)} placeholder="如：2023/10/01 - 2023/10/07" />
-            </div>
-          </div>
-        </div>
-
-        {/* Projects */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2>專案進度回報</h2>
-            <button className="btn btn-primary" onClick={addProject}>
-              <Plus size={16} style={{ marginRight: '0.5rem' }}/> 新增專案
-            </button>
-          </div>
-
-          {data.projects.map((project, pIndex) => (
-            <div key={project.id} className="card" style={{ position: 'relative', borderLeft: '4px solid var(--primary)' }}>
-              <button 
-                onClick={() => removeProject(project.id)}
-                style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}
-              >
-                <Trash2 size={20} />
-              </button>
-              
-              <div style={{ marginBottom: '1.5rem', width: '90%' }}>
-                <label>專案名稱</label>
-                <input className="input-field" value={project.name} onChange={e => updateProject(project.id, 'name', e.target.value)} placeholder="如：公司官網改版專案" />
-              </div>
-              
-              <div style={{ marginBottom: '1.5rem', width: '95%', backgroundColor: '#EFF6FF', padding: '1rem', borderRadius: '0.5rem', borderLeft: '3px solid #3B82F6' }}>
-                <label style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#1E3A8A', marginBottom: '0.8rem', display: 'block' }}>重要時程</label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>腳本、商攝清單</label>
-                    <input className="input-field" value={project.milestones?.scriptPhotoList || ''} onChange={e => updateMilestone(project.id, 'scriptPhotoList', e.target.value)} placeholder="如：8/10" />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>照片影片</label>
-                    <input className="input-field" value={project.milestones?.filming || ''} onChange={e => updateMilestone(project.id, 'filming', e.target.value)} placeholder="如：8/15" />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>問卷</label>
-                    <input className="input-field" value={project.milestones?.questionnaire || ''} onChange={e => updateMilestone(project.id, 'questionnaire', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>平台提案</label>
-                    <input className="input-field" value={project.milestones?.platformProposal || ''} onChange={e => updateMilestone(project.id, 'platformProposal', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>頁面架構</label>
-                    <input className="input-field" value={project.milestones?.pageStructure || ''} onChange={e => updateMilestone(project.id, 'pageStructure', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>銷售頁設計</label>
-                    <input className="input-field" value={project.milestones?.salesPage || ''} onChange={e => updateMilestone(project.id, 'salesPage', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>創：FB、IG、line</label>
-                    <input className="input-field" value={project.milestones?.createSocials || ''} onChange={e => updateMilestone(project.id, 'createSocials', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>發圖文：FB、line、EDM</label>
-                    <input className="input-field" value={project.milestones?.postContent || ''} onChange={e => updateMilestone(project.id, 'postContent', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>上線</label>
-                    <input className="input-field" value={project.milestones?.launch || ''} onChange={e => updateMilestone(project.id, 'launch', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>工廠出貨</label>
-                    <input className="input-field" value={project.milestones?.bulkArrival || ''} onChange={e => updateMilestone(project.id, 'bulkArrival', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>官網上架</label>
-                    <input className="input-field" value={project.milestones?.officialSiteLaunch || ''} onChange={e => updateMilestone(project.id, 'officialSiteLaunch', e.target.value)} />
-                  </div>
-                  <div>
-                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>出貨給客人</label>
-                    <input className="input-field" value={project.milestones?.shippingToCustomer || ''} onChange={e => updateMilestone(project.id, 'shippingToCustomer', e.target.value)} />
-                  </div>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                  <label style={{ fontSize: '1rem' }}>本週工作項目</label>
-                  <button className="btn" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: '#F3F4F6' }} onClick={() => addTask(project.id)}>
-                    + 新增項目
-                  </button>
-                </div>
-
-                {project.tasks.map((task, tIndex) => (
-                  <div key={task.id} style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '0.5rem', position: 'relative' }}>
-                    <button 
-                      onClick={() => removeTask(project.id, task.id)}
-                      style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', color: '#9CA3AF', cursor: 'pointer' }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                    
-                    <label style={{ fontSize: '0.75rem' }}>項目描述</label>
-                    <textarea 
-                      className="input-field" 
-                      style={{ minHeight: '60px', marginBottom: '0.5rem', width: '95%' }} 
-                      value={task.description} 
-                      onChange={e => updateTask(project.id, task.id, 'description', e.target.value)} 
-                    />
-
-                    <label style={{ fontSize: '0.75rem' }}>外部連結 (選填)</label>
-                    <input 
-                      className="input-field" 
-                      style={{ marginBottom: '0.5rem', width: '95%' }} 
-                      value={task.link || ''} 
-                      onChange={e => updateTask(project.id, task.id, 'link', e.target.value)} 
-                      placeholder="例如：https://google.com"
-                    />
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                      <input 
-                        type="checkbox" 
-                        id={`contact-${task.id}`} 
-                        checked={task.hasContact} 
-                        onChange={e => updateTask(project.id, task.id, 'hasContact', e.target.checked)} 
-                      />
-                      <label htmlFor={`contact-${task.id}`} style={{ margin: 0 }}>此項目有對外聯絡事項</label>
-                    </div>
-
-                    {task.hasContact && (
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.5rem', marginTop: '0.5rem', paddingLeft: '1.5rem', borderLeft: '2px dashed #E5E7EB' }}>
-                        <div>
-                          <label style={{ fontSize: '0.75rem' }}>聯絡人 / 窗口</label>
-                          <input className="input-field" value={task.contact?.person || ''} onChange={e => updateTask(project.id, task.id, 'contact.person', e.target.value)} />
-                        </div>
-                        <div>
-                          <label style={{ fontSize: '0.75rem' }}>聯絡進度說明</label>
-                          <input className="input-field" value={task.contact?.progress || ''} onChange={e => updateTask(project.id, task.id, 'contact.progress', e.target.value)} />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div>
-                <label>下週預計進度</label>
-                <textarea 
-                  className="input-field" 
-                  style={{ minHeight: '80px' }} 
-                  value={project.nextWeekPlan} 
-                  onChange={e => updateProject(project.id, 'nextWeekPlan', e.target.value)} 
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Report Preview Section */}
-      <div className={`report-preview-container ${isWebFullscreen ? "fullscreen-mode" : ""}`} style={isWebFullscreen ? {
-        position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999,
-        backgroundColor: '#000', padding: '2rem', overflowY: 'auto', margin: 0, borderRadius: 0
-      } : { backgroundColor: '#E5E7EB', padding: '1rem', borderRadius: '0.5rem', height: '100vh', overflowY: 'auto' }}>
-      
-      {isWebFullscreen && (
-        <button 
-          onClick={() => setIsWebFullscreen(false)}
-          style={{ position: 'fixed', top: '2rem', right: '2rem', zIndex: 10000, padding: '0.75rem 1.5rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.5rem', cursor: 'pointer', /* removed backdrop-filter */ fontSize: '1rem', fontWeight: 'bold' }}
-        >
-          ❌ 退出全螢幕 (ESC)
-        </button>
-      )}
-        {React.useMemo(() => {
+  const previewContent = React.useMemo(() => {
           const data = deferredData;
           return (
             <React.Fragment>
@@ -1264,7 +1029,244 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
         )}
             </React.Fragment>
           );
-        }, [deferredData, viewMode, isDarkMode])}
+        }, [deferredData, viewMode, isDarkMode]);
+
+  if (!isLoaded) return null;
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }} className="responsive-grid">
+      {/* Editor Section (Hidden on Print) */}
+      <div className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxHeight: '100vh', overflowY: 'auto', paddingRight: '1rem', paddingBottom: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+          <div>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>工作週報系統</h1>
+            <div style={{ fontSize: '0.875rem', color: '#6B7280', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>個人專屬週報系統</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            {saveStatus && <span style={{ fontSize: '0.875rem', color: 'green', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><CheckCircle2 size={16}/> {saveStatus}</span>}
+            <button 
+              onClick={() => {
+                if (window.confirm('確定要清除畫面上所有的專案草稿嗎？這會讓您擁有乾淨的版面重新匯入任務。')) {
+                  setData(prev => ({ ...prev, projects: [] }));
+                }
+              }} 
+              className="btn" 
+              style={{ backgroundColor: '#FEE2E2', color: '#EF4444', borderColor: '#FCA5A5' }}
+            >
+              🗑️ 清空所有草稿
+            </button>
+            <button className="btn" style={{ backgroundColor: '#10B981', color: 'white' }} onClick={handleImportFromLINE}>
+              📥 匯入 LINE 任務
+            </button>
+            <button className="btn" style={{ backgroundColor: '#3B82F6', color: 'white', fontWeight: 'bold', boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.5)' }} onClick={syncToLINE}>
+              🔄 雙向同步到 LINE
+            </button>
+            <button className="btn btn-primary" onClick={saveToLocal} style={{ boxShadow: 'var(--shadow-sm)' }}>
+              <Save size={18} style={{ marginRight: '0.5rem' }}/> 儲存進度
+            </button>
+            <button className="btn" style={{ backgroundColor: '#FEE2E2', color: '#B91C1C', border: '1px solid #FECACA' }} onClick={() => setData(defaultData)}>
+              <Trash2 size={18} style={{ marginRight: '0.5rem' }}/> 清空
+            </button>
+          </div>
+        </div>
+
+        {/* View Toggles */}
+        <div style={{ display: 'flex', gap: '0.5rem', backgroundColor: '#F3F4F6', padding: '0.5rem', borderRadius: '0.5rem' }}>
+          <button 
+            className="btn" 
+            style={{ flex: 1, backgroundColor: viewMode === 'presentation' ? 'white' : 'transparent', color: viewMode === 'presentation' ? 'var(--primary)' : '#6B7280', boxShadow: viewMode === 'presentation' ? 'var(--shadow-sm)' : 'none' }}
+            onClick={() => setViewMode('presentation')}
+          >
+            <LayoutDashboard size={18} style={{ marginRight: '0.5rem' }}/> PPT 簡報模式
+          </button>
+          <button 
+            className="btn" 
+            style={{ flex: 1, backgroundColor: viewMode === 'table' ? 'white' : 'transparent', color: viewMode === 'table' ? 'var(--primary)' : '#6B7280', boxShadow: viewMode === 'table' ? 'var(--shadow-sm)' : 'none' }}
+            onClick={() => setViewMode('table')}
+          >
+            <Table size={18} style={{ marginRight: '0.5rem' }}/> 總表模式
+          </button>
+        </div>
+
+        {/* General Info */}
+        <div className="card">
+          <h2>基本資訊</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem', marginTop: '1rem' }}>
+            <div>
+              <label>週報期間</label>
+              <input className="input-field" value={data.dateRange} onChange={e => updateGeneralInfo('dateRange', e.target.value)} placeholder="如：2023/10/01 - 2023/10/07" />
+            </div>
+          </div>
+        </div>
+
+        {/* Projects */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2>專案進度回報</h2>
+            <button className="btn btn-primary" onClick={addProject}>
+              <Plus size={16} style={{ marginRight: '0.5rem' }}/> 新增專案
+            </button>
+          </div>
+
+          {data.projects.map((project, pIndex) => (
+            <div key={project.id} className="card" style={{ position: 'relative', borderLeft: '4px solid var(--primary)' }}>
+              <button 
+                onClick={() => removeProject(project.id)}
+                style={{ position: 'absolute', top: '1rem', right: '1rem', background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer' }}
+              >
+                <Trash2 size={20} />
+              </button>
+              
+              <div style={{ marginBottom: '1.5rem', width: '90%' }}>
+                <label>專案名稱</label>
+                <input className="input-field" value={project.name} onChange={e => updateProject(project.id, 'name', e.target.value)} placeholder="如：公司官網改版專案" />
+              </div>
+              
+              <div style={{ marginBottom: '1.5rem', width: '95%', backgroundColor: '#EFF6FF', padding: '1rem', borderRadius: '0.5rem', borderLeft: '3px solid #3B82F6' }}>
+                <label style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#1E3A8A', marginBottom: '0.8rem', display: 'block' }}>重要時程</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>腳本、商攝清單</label>
+                    <input className="input-field" value={project.milestones?.scriptPhotoList || ''} onChange={e => updateMilestone(project.id, 'scriptPhotoList', e.target.value)} placeholder="如：8/10" />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>照片影片</label>
+                    <input className="input-field" value={project.milestones?.filming || ''} onChange={e => updateMilestone(project.id, 'filming', e.target.value)} placeholder="如：8/15" />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>問卷</label>
+                    <input className="input-field" value={project.milestones?.questionnaire || ''} onChange={e => updateMilestone(project.id, 'questionnaire', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>平台提案</label>
+                    <input className="input-field" value={project.milestones?.platformProposal || ''} onChange={e => updateMilestone(project.id, 'platformProposal', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>頁面架構</label>
+                    <input className="input-field" value={project.milestones?.pageStructure || ''} onChange={e => updateMilestone(project.id, 'pageStructure', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>銷售頁設計</label>
+                    <input className="input-field" value={project.milestones?.salesPage || ''} onChange={e => updateMilestone(project.id, 'salesPage', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>創：FB、IG、line</label>
+                    <input className="input-field" value={project.milestones?.createSocials || ''} onChange={e => updateMilestone(project.id, 'createSocials', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>發圖文：FB、line、EDM</label>
+                    <input className="input-field" value={project.milestones?.postContent || ''} onChange={e => updateMilestone(project.id, 'postContent', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>上線</label>
+                    <input className="input-field" value={project.milestones?.launch || ''} onChange={e => updateMilestone(project.id, 'launch', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>工廠出貨</label>
+                    <input className="input-field" value={project.milestones?.bulkArrival || ''} onChange={e => updateMilestone(project.id, 'bulkArrival', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>官網上架</label>
+                    <input className="input-field" value={project.milestones?.officialSiteLaunch || ''} onChange={e => updateMilestone(project.id, 'officialSiteLaunch', e.target.value)} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>出貨給客人</label>
+                    <input className="input-field" value={project.milestones?.shippingToCustomer || ''} onChange={e => updateMilestone(project.id, 'shippingToCustomer', e.target.value)} />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                  <label style={{ fontSize: '1rem' }}>本週工作項目</label>
+                  <button className="btn" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', backgroundColor: '#F3F4F6' }} onClick={() => addTask(project.id)}>
+                    + 新增項目
+                  </button>
+                </div>
+
+                {project.tasks.map((task, tIndex) => (
+                  <div key={task.id} style={{ padding: '1rem', backgroundColor: '#F9FAFB', borderRadius: '0.5rem', marginBottom: '0.5rem', position: 'relative' }}>
+                    <button 
+                      onClick={() => removeTask(project.id, task.id)}
+                      style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', color: '#9CA3AF', cursor: 'pointer' }}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                    
+                    <label style={{ fontSize: '0.75rem' }}>項目描述</label>
+                    <textarea 
+                      className="input-field" 
+                      style={{ minHeight: '60px', marginBottom: '0.5rem', width: '95%' }} 
+                      value={task.description} 
+                      onChange={e => updateTask(project.id, task.id, 'description', e.target.value)} 
+                    />
+
+                    <label style={{ fontSize: '0.75rem' }}>外部連結 (選填)</label>
+                    <input 
+                      className="input-field" 
+                      style={{ marginBottom: '0.5rem', width: '95%' }} 
+                      value={task.link || ''} 
+                      onChange={e => updateTask(project.id, task.id, 'link', e.target.value)} 
+                      placeholder="例如：https://google.com"
+                    />
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                      <input 
+                        type="checkbox" 
+                        id={`contact-${task.id}`} 
+                        checked={task.hasContact} 
+                        onChange={e => updateTask(project.id, task.id, 'hasContact', e.target.checked)} 
+                      />
+                      <label htmlFor={`contact-${task.id}`} style={{ margin: 0 }}>此項目有對外聯絡事項</label>
+                    </div>
+
+                    {task.hasContact && (
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '0.5rem', marginTop: '0.5rem', paddingLeft: '1.5rem', borderLeft: '2px dashed #E5E7EB' }}>
+                        <div>
+                          <label style={{ fontSize: '0.75rem' }}>聯絡人 / 窗口</label>
+                          <input className="input-field" value={task.contact?.person || ''} onChange={e => updateTask(project.id, task.id, 'contact.person', e.target.value)} />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: '0.75rem' }}>聯絡進度說明</label>
+                          <input className="input-field" value={task.contact?.progress || ''} onChange={e => updateTask(project.id, task.id, 'contact.progress', e.target.value)} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div>
+                <label>下週預計進度</label>
+                <textarea 
+                  className="input-field" 
+                  style={{ minHeight: '80px' }} 
+                  value={project.nextWeekPlan} 
+                  onChange={e => updateProject(project.id, 'nextWeekPlan', e.target.value)} 
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Report Preview Section */}
+      <div className={`report-preview-container ${isWebFullscreen ? "fullscreen-mode" : ""}`} style={isWebFullscreen ? {
+        position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999,
+        backgroundColor: '#000', padding: '2rem', overflowY: 'auto', margin: 0, borderRadius: 0
+      } : { backgroundColor: '#E5E7EB', padding: '1rem', borderRadius: '0.5rem', height: '100vh', overflowY: 'auto' }}>
+      
+      {isWebFullscreen && (
+        <button 
+          onClick={() => setIsWebFullscreen(false)}
+          style={{ position: 'fixed', top: '2rem', right: '2rem', zIndex: 10000, padding: '0.75rem 1.5rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.5rem', cursor: 'pointer', /* removed backdrop-filter */ fontSize: '1rem', fontWeight: 'bold' }}
+        >
+          ❌ 退出全螢幕 (ESC)
+        </button>
+      )}
+        {previewContent}
       </div>
     </div>
   );
