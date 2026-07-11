@@ -11,17 +11,17 @@ export interface Task {
 }
 
 export interface Milestones {
-  media?: string;
+  filming?: string;
   questionnaire?: string;
   platformProposal?: string;
   pageStructure?: string;
-  salesPageDesign?: string;
+  salesPage?: string;
   createSocials?: string;
   postContent?: string;
   launch?: string;
-  factoryShipping?: string;
+  bulkArrival?: string;
   officialSiteLaunch?: string;
-  shippingToCustomer?: string;
+  shipping?: string;
 }
 
 export interface Project {

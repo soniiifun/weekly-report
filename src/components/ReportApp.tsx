@@ -566,7 +566,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem' }}>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>照片影片</label>
-                    <input className="input-field" value={project.milestones?.media || ''} onChange={e => updateMilestone(project.id, 'media', e.target.value)} placeholder="如：8/15" />
+                    <input className="input-field" value={project.milestones?.filming || ''} onChange={e => updateMilestone(project.id, 'filming', e.target.value)} placeholder="如：8/15" />
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>問卷</label>
@@ -582,7 +582,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>銷售頁設計</label>
-                    <input className="input-field" value={project.milestones?.salesPageDesign || ''} onChange={e => updateMilestone(project.id, 'salesPageDesign', e.target.value)} />
+                    <input className="input-field" value={project.milestones?.salesPage || ''} onChange={e => updateMilestone(project.id, 'salesPage', e.target.value)} />
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>創：FB、IG、line</label>
@@ -598,7 +598,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>工廠出貨</label>
-                    <input className="input-field" value={project.milestones?.factoryShipping || ''} onChange={e => updateMilestone(project.id, 'factoryShipping', e.target.value)} />
+                    <input className="input-field" value={project.milestones?.bulkArrival || ''} onChange={e => updateMilestone(project.id, 'bulkArrival', e.target.value)} />
                   </div>
                   <div>
                     <label style={{ fontSize: '0.75rem', color: '#3B82F6' }}>官網上架</label>
@@ -913,17 +913,17 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               }[] = [];
               
               const milestoneLabels: Record<string, string> = {
-                media: '照片影片',
+                filming: '照片影片',
                 questionnaire: '問卷',
                 platformProposal: '平台提案',
                 pageStructure: '頁面架構',
-                salesPageDesign: '銷售頁設計',
+                salesPage: '銷售頁設計',
                 createSocials: '創：FB、IG、line',
                 postContent: '發圖文：FB、line、EDM',
                 launch: '上線',
-                factoryShipping: '工廠出貨',
+                bulkArrival: '工廠出貨',
                 officialSiteLaunch: '官網上架',
-                shippingToCustomer: '出貨給客人'
+                shipping: '出貨給客人'
               };
 
               data.projects.forEach(project => {
@@ -997,7 +997,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                   <div className="slide" style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <div className="cover-box">
                       <h1 className="slide-title" style={{ fontSize: '8cqi', margin: '0 0 2cqi 0' }}>每週工作匯報</h1>
-                      <div className="slide-subtitle" style={{ fontSize: '3.5cqi', marginBottom: '3cqi', marginTop: 0 }}>{data.dateRange || '未設定期間'}</div>
+                      <div className="slide-subtitle" style={{ fontSize: '3.5cqi', marginBottom: '3cqi', marginTop: 0 }}>{data.employeeName || 'Sonia'}</div>
                     </div>
                   </div>
 
@@ -1043,7 +1043,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
                               <div className="milestones-list" style={{ marginTop: '2cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi', display: 'flex', flexDirection: 'column', gap: '0.8cqi' }}>
-                                <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: '0.5cqi' }}>📌 重要時程</div>
+                                <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: '0.5cqi' }}>重要時程</div>
                                 {slideData.milestoneList.map((m, idx) => (
                                   <div key={idx} style={{ display: 'flex', gap: '1cqi', alignItems: 'flex-start' }}>
                                     <div style={{ width: '0.8cqi', height: '0.8cqi', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0, marginTop: '0.4cqi' }}></div>
