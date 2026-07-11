@@ -1047,14 +1047,16 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                             <MiniCalendar year={slideData.slideYear} month={slideData.slideMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
-                              <div className="milestones-list" style={{ marginTop: '2cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi', display: 'flex', flexDirection: 'column', gap: '0.8cqi' }}>
-                                <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: '0.5cqi' }}>重要時程</div>
-                                {slideData.milestoneList.map((m, idx) => (
-                                  <div key={idx} style={{ display: 'flex', gap: '1cqi', alignItems: 'flex-start' }}>
-                                    <div style={{ width: '0.8cqi', height: '0.8cqi', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0, marginTop: '0.4cqi' }}></div>
-                                    <span style={{ color: '#4B5563', fontWeight: 'bold' }}>{m.label}：{m.value}</span>
-                                  </div>
-                                ))}
+                              <div className="milestones-list" style={{ marginTop: '1.5cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi' }}>
+                                <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: '1cqi' }}>重要時程</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: '0.5cqi', rowGap: '0.6cqi' }}>
+                                  {slideData.milestoneList.map((m, idx) => (
+                                    <div key={idx} style={{ display: 'flex', gap: '0.5cqi', alignItems: 'flex-start' }}>
+                                      <div style={{ width: '0.8cqi', height: '0.8cqi', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0, marginTop: '0.4cqi' }}></div>
+                                      <span style={{ color: '#4B5563', fontWeight: 'bold', lineHeight: '1.2' }}>{m.label}：{m.value}</span>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
                             )}
                           </div>
