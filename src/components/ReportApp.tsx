@@ -141,7 +141,7 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
               opacity: isActive || isMilestone ? 0.9 : 0.8,
               position: 'relative'
             }}>
-              <span style={{ position: 'relative', top: isToday ? '-calc(0.2 * var(--cqi-unit))' : '0' }}>{d}</span>
+              <span style={{ position: 'relative', top: isToday ? 'calc(-0.2 * var(--cqi-unit))' : '0' }}>{d}</span>
               {isToday && (
                 <div style={{ position: 'absolute', bottom: 'calc(0.4 * var(--cqi-unit))', width: 'calc(0.5 * var(--cqi-unit))', height: 'calc(0.5 * var(--cqi-unit))', backgroundColor: (isActive || isMilestone) ? '#FFFFFF' : '#EF4444', borderRadius: '50%' }}></div>
               )}
@@ -788,7 +788,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .dark .timeline-line { background: rgba(255,255,255,0.2); }
           
           .timeline-ticks { position: absolute; top: 50%; left: 0; width: 100%; height: 100%; pointer-events: none; }
-          .timeline-tick { position: absolute; top: -calc(1 * var(--cqi-unit)); width: calc(0.2 * var(--cqi-unit)); height: calc(2.4 * var(--cqi-unit)); background: rgba(0,0,0,0.2); }
+          .timeline-tick { position: absolute; top: calc(-1 * var(--cqi-unit)); width: calc(0.2 * var(--cqi-unit)); height: calc(2.4 * var(--cqi-unit)); background: rgba(0,0,0,0.2); }
           .dark .timeline-tick { background: rgba(255,255,255,0.3); }
           
           .timeline-tick-label { position: absolute; top: calc(2.5 * var(--cqi-unit)); transform: translateX(-50%); font-size: calc(1.6 * var(--cqi-unit)); color: #6B7280; }
@@ -1076,13 +1076,13 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: '-calc(1 * var(--cqi-unit))', left: 'calc(0 * var(--cqi-unit))', fontSize: 'calc(15 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'brightness(0.6)', zIndex: 0, opacity: 0.9, letterSpacing: '-calc(1 * var(--cqi-unit))' }}>
+                        <div style={{ position: 'absolute', top: 'calc(-1 * var(--cqi-unit))', left: 'calc(0 * var(--cqi-unit))', fontSize: 'calc(15 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'brightness(0.6)', zIndex: 0, opacity: 0.9, letterSpacing: 'calc(-1 * var(--cqi-unit))' }}>
                           {projNumberStr}
                         </div>
                         <div className="slide-page-num" style={{ zIndex: 1 }}>{pageNum}</div>
                         <div className="slide-watermark" style={{ zIndex: 1 }}>Weekly Report</div>
                         
-                        <div className="slide-header" style={{ position: 'relative', zIndex: 1, marginTop: '-calc(3 * var(--cqi-unit))' }}>
+                        <div className="slide-header" style={{ position: 'relative', zIndex: 1, marginTop: 'calc(-3 * var(--cqi-unit))' }}>
                           <h2 className="slide-title" style={{ color: '#000000', textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
                             {slideData.project.name}
                             {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: 'calc(1 * var(--cqi-unit))' }}>(Part {slideData.part})</span>}
@@ -1092,13 +1092,13 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
                         </div>
                         
-                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: 'calc(1 * var(--cqi-unit))', marginLeft: '-calc(2 * var(--cqi-unit))', marginTop: '-calc(2 * var(--cqi-unit))', overflow: 'visible' }}>
+                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: 'calc(1 * var(--cqi-unit))', marginLeft: 'calc(-2 * var(--cqi-unit))', marginTop: 'calc(-2 * var(--cqi-unit))', overflow: 'visible' }}>
                           
                           <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(2 * var(--cqi-unit))', justifyContent: 'center' }}>
                             <MiniCalendar year={slideData.slideYear} month={slideData.slideMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
-                              <div className="milestones-list" style={{ marginTop: '-calc(0.5 * var(--cqi-unit))', marginLeft: '-calc(2 * var(--cqi-unit))', padding: 'calc(1.5 * var(--cqi-unit))', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 'calc(0.8 * var(--cqi-unit))', fontSize: 'calc(1.4 * var(--cqi-unit))' }}>
+                              <div className="milestones-list" style={{ marginTop: 'calc(-0.5 * var(--cqi-unit))', marginLeft: 'calc(-2 * var(--cqi-unit))', padding: 'calc(1.5 * var(--cqi-unit))', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 'calc(0.8 * var(--cqi-unit))', fontSize: 'calc(1.4 * var(--cqi-unit))' }}>
                                 <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: 'calc(1 * var(--cqi-unit))' }}>重要時程</div>
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: 'calc(0.5 * var(--cqi-unit))', rowGap: 'calc(0.6 * var(--cqi-unit))' }}>
                                   {slideData.milestoneList.map((m, idx) => (
