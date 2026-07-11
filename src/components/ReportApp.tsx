@@ -488,9 +488,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             <React.Fragment>
               <style dangerouslySetInnerHTML={{__html: `
                 
-          :root { --cqi-unit: 0.45vw; }
-          .fullscreen-mode { --cqi-unit: 0.95vw; }
-          @media (max-width: 1024px) { :root { --cqi-unit: 0.9vw; } }
+          .report-preview-container { container-type: inline-size; --cqi-unit: 1cqi; }
+          .fullscreen-mode { --cqi-unit: 1vw; }
           
           .slides-container { display: flex; flex-direction: column; gap: 2rem; }
 
