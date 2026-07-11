@@ -252,14 +252,6 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
   const handleFullscreen = () => {
     setIsWebFullscreen(true);
-    const el = document.documentElement;
-    if (el) {
-      if (el.requestFullscreen) {
-        el.requestFullscreen().catch(e => console.log('Fullscreen error:', e));
-      } else if ((el as any).webkitRequestFullscreen) {
-        (el as any).webkitRequestFullscreen();
-      }
-    }
   };
 
   const handleExportPDF = async () => {
