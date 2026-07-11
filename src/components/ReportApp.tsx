@@ -69,7 +69,7 @@ const getDaysInMonth = (month: number) => {
 
 
 // Morandi Palette
-const PALETTE = ['#9EABAE', '#C4A49B', '#A4B29E', '#D4C4B7', '#9297A0', '#C3B5C6', '#D1B894'];
+const PALETTE = ['#5B8AB5', '#7A9EB1', '#A9C2D8', '#8FABC2', '#6C93B0', '#9DBBD1', '#4F7C9D'];
 
 interface TimelineTask {
   day: number;
@@ -494,7 +494,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slides-container { display: flex; flex-direction: column; gap: 2rem; }
 
           .slide {
-            background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
+            background: #F4F7F9;
             border-radius: 1rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             padding: calc(4 * var(--cqi-unit)) calc(4 * var(--cqi-unit)) calc(1 * var(--cqi-unit)) calc(4 * var(--cqi-unit));
@@ -506,7 +506,14 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             flex-direction: column;
             page-break-after: always;
             border: 1px solid rgba(0,0,0,0.05);
-            color: #111827;
+            color: #2C3E50;
+            z-index: 1;
+          }
+          .slide::before {
+            content: ''; position: absolute; top: -20%; left: -10%; width: 45%; aspect-ratio: 1; background: #A9C2D8; border-radius: 50%; opacity: 0.25; z-index: 0; pointer-events: none;
+          }
+          .slide::after {
+            content: ''; position: absolute; bottom: -15%; right: -5%; width: 35%; aspect-ratio: 1; background: #5B8AB5; border-radius: 50%; opacity: 0.2; z-index: 0; pointer-events: none;
           }
           
           .dark .slide {
@@ -840,7 +847,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 'calc(-1 * var(--cqi-unit))', left: 'calc(0 * var(--cqi-unit))', fontSize: 'calc(15 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'brightness(0.6)', zIndex: 0, opacity: 0.9, letterSpacing: 'calc(-1 * var(--cqi-unit))' }}>
+                        <div style={{ position: 'absolute', top: 'calc(-1 * var(--cqi-unit))', left: 'calc(0 * var(--cqi-unit))', fontSize: 'calc(15 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'none', zIndex: 0, opacity: 0.35, letterSpacing: 'calc(-1 * var(--cqi-unit))' }}>
                           {projNumberStr}
                         </div>
                         <div className="slide-page-num" style={{ zIndex: 1 }}>{pageNum}</div>
