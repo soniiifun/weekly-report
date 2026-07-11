@@ -665,7 +665,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             background: linear-gradient(135deg, #F8FAFC, #E2E8F0);
             border-radius: 1rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            padding: 4cqi;
+            padding: 4cqi 4cqi 1cqi 4cqi;
             aspect-ratio: 16 / 9;
             container-type: inline-size;
             position: relative;
@@ -981,7 +981,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
                         </div>
                         
-                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: '1cqi', marginLeft: '-2cqi' }}>
+                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: '1cqi', marginLeft: '-2cqi', marginTop: '-2cqi' }}>
                           
                           <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center' }}>
                             <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
