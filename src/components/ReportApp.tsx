@@ -163,6 +163,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [draftText, setDraftText] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isWebFullscreen, setIsWebFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsWebFullscreen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   useEffect(() => {
     if (isDarkMode) {
@@ -242,14 +251,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
   };
 
   const handleFullscreen = () => {
-    const el = document.documentElement;
-    if (el) {
-      if (el.requestFullscreen) {
-        el.requestFullscreen();
-      } else if ((el as any).webkitRequestFullscreen) {
-        (el as any).webkitRequestFullscreen();
-      }
-    }
+    setIsWebFullscreen(true);
   };
 
   const handleExportPDF = async () => {
@@ -702,7 +704,19 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
       </div>
 
       {/* Report Preview Section */}
-      <div className="report-preview-container" style={{ backgroundColor: '#E5E7EB', padding: '1rem', borderRadius: '0.5rem', height: '100vh', overflowY: 'auto' }}>
+      <div className="report-preview-container" style={isWebFullscreen ? {
+        position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 9999,
+        backgroundColor: '#000', padding: '2rem', overflowY: 'auto', margin: 0, borderRadius: 0
+      } : { backgroundColor: '#E5E7EB', padding: '1rem', borderRadius: '0.5rem', height: '100vh', overflowY: 'auto' }}>
+      
+      {isWebFullscreen && (
+        <button 
+          onClick={() => setIsWebFullscreen(false)}
+          style={{ position: 'fixed', top: '2rem', right: '2rem', zIndex: 10000, padding: '0.75rem 1.5rem', background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0.5rem', cursor: 'pointer', backdropFilter: 'blur(10px)', fontSize: '1rem', fontWeight: 'bold' }}
+        >
+          ❌ 退出全螢幕 (ESC)
+        </button>
+      )}
         {React.useMemo(() => {
           const data = deferredData;
           return (
@@ -802,13 +816,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           
           .slide-watermark { position: absolute; top: 2cqi; right: 4cqi; font-size: 1.5cqi; color: #9CA3AF; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
           .dark .slide-watermark { color: #4B5563; }
-          :fullscreen .no-print { display: none !important; }
-          :-webkit-full-screen .no-print { display: none !important; }
-          :fullscreen .responsive-grid { display: block !important; }
-          :-webkit-full-screen .responsive-grid { display: block !important; }
-          :fullscreen .report-preview-container { height: 100vh !important; max-height: none !important; padding: 2rem !important; background-color: #000 !important; border-radius: 0 !important; }
-          :-webkit-full-screen .report-preview-container { height: 100vh !important; max-height: none !important; padding: 2rem !important; background-color: #000 !important; border-radius: 0 !important; }
-          :fullscreen body { background-color: #000; }
+
         `}} />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', gap: '0.5rem' }} className="no-print">
