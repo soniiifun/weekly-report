@@ -510,10 +510,10 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
             z-index: 1;
           }
           .slide::before {
-            content: ''; position: absolute; top: -10%; left: -5%; width: 40%; height: 60%; background: linear-gradient(135deg, #A9C2D8 0%, transparent 100%); opacity: 0.15; z-index: 0; pointer-events: none; transform: skewX(-15deg); border-radius: 1rem;
+            content: ''; position: absolute; top: -10%; left: -5%; width: 60%; height: 80%; background: linear-gradient(135deg, #8FAECB 0%, transparent 100%); opacity: 0.25; z-index: 0; pointer-events: none; transform: skewX(-15deg); border-radius: 1rem;
           }
           .slide::after {
-            content: ''; position: absolute; bottom: -10%; right: -5%; width: 50%; height: 50%; background: linear-gradient(315deg, #5B8AB5 0%, transparent 100%); opacity: 0.1; z-index: 0; pointer-events: none; transform: skewX(-15deg); border-radius: 1rem;
+            content: ''; position: absolute; bottom: -10%; right: -5%; width: 70%; height: 70%; background: linear-gradient(315deg, #4A769E 0%, transparent 100%); opacity: 0.2; z-index: 0; pointer-events: none; transform: skewX(-15deg); border-radius: 1rem;
           }
           
           .dark .slide {
