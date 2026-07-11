@@ -242,7 +242,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
   };
 
   const handleFullscreen = () => {
-    const el = document.getElementById('presentation-slides');
+    const el = document.documentElement;
     if (el) {
       if (el.requestFullscreen) {
         el.requestFullscreen();
@@ -802,8 +802,13 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           
           .slide-watermark { position: absolute; top: 2cqi; right: 4cqi; font-size: 1.5cqi; color: #9CA3AF; opacity: 0.5; letter-spacing: 0.1em; text-transform: uppercase; }
           .dark .slide-watermark { color: #4B5563; }
-          .slide-deck:-webkit-full-screen { background-color: #000; padding: 2rem; overflow-y: auto; height: 100vh; }
-          .slide-deck:fullscreen { background-color: #000; padding: 2rem; overflow-y: auto; height: 100vh; }
+          :fullscreen .no-print { display: none !important; }
+          :-webkit-full-screen .no-print { display: none !important; }
+          :fullscreen .responsive-grid { display: block !important; }
+          :-webkit-full-screen .responsive-grid { display: block !important; }
+          :fullscreen .report-preview-container { height: 100vh !important; max-height: none !important; padding: 2rem !important; background-color: #000 !important; border-radius: 0 !important; }
+          :-webkit-full-screen .report-preview-container { height: 100vh !important; max-height: none !important; padding: 2rem !important; background-color: #000 !important; border-radius: 0 !important; }
+          :fullscreen body { background-color: #000; }
         `}} />
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', gap: '0.5rem' }} className="no-print">
