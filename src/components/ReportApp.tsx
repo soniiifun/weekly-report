@@ -35,13 +35,29 @@ const formatDayToDate = (dayOfYear: number) => {
 };
 
 // --- TIMELINE & CALENDAR PARSING LOGIC ---
+const parseChineseNum = (str: string) => {
+  if (!str) return 0;
+  if (!isNaN(parseInt(str))) return parseInt(str);
+  const map: Record<string, number> = {
+    '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9, '十': 10,
+    '十一': 11, '十二': 12, '十三': 13, '十四': 14, '十五': 15, '十六': 16, '十七': 17, '十八': 18, '十九': 19,
+    '二十': 20, '二十一': 21, '二十二': 22, '二十三': 23, '二十四': 24, '二十五': 25, '二十六': 26, '二十七': 27, '二十八': 28, '二十九': 29,
+    '三十': 30, '三十一': 31
+  };
+  return map[str] || 0;
+};
+
 const parseDate = (text: string) => {
   if (!text) return null;
-  // Matches formats like: 7/5, 07/05, 7.5, 7月5日, 7月5號
-  const regex = /(?:^|\s|[^0-9a-zA-Z])(0?[1-9]|1[0-2])\s*[\/\.月]\s*(0?[1-9]|[12]\d|3[01])\s*(?:日|號)?/;
+  // Matches formats like: 7/5, 07/05, 7.5, 7月5日, 7月5號, 七月八日
+  const regex = /(?:^|\s|[^0-9a-zA-Z一-龥])([0-9]{1,2}|[一二三四五六七八九十]+)\s*[\/\.月]\s*([0-9]{1,2}|[一二三四五六七八九十]+)\s*(?:日|號)?/;
   const match = text.match(regex);
   if (match) {
-    return { month: parseInt(match[1]), day: parseInt(match[2]) };
+    const month = parseChineseNum(match[1]);
+    const day = parseChineseNum(match[2]);
+    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
+      return { month, day };
+    }
   }
   return null;
 };
@@ -73,6 +89,45 @@ interface TimelineMonth {
 interface ReportAppProps {
   currentUser?: string;
 }
+
+const MiniCalendar = ({ year, month, activeDays, color }: { year: number, month: number, activeDays: number[], color: string }) => {
+  const firstDay = new Date(year, month - 1, 1).getDay();
+  const daysInMonth = new Date(year, month, 0).getDate();
+  
+  const days = [];
+  for (let i = 0; i < firstDay; i++) days.push(null);
+  for (let i = 1; i <= daysInMonth; i++) days.push(i);
+  
+  const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+  
+  return (
+    <div className="mini-calendar" style={{ width: '100%', fontSize: '1.8cqi' }}>
+      <div style={{ fontWeight: 'bold', fontSize: '2.5cqi', marginBottom: '1.5cqi', color: '#111827', textAlign: 'left', paddingLeft: '0.5cqi' }}>
+        {month} 月
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '0.5cqi', textAlign: 'center' }}>
+        {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: 'bold', fontSize: '1.6cqi' }}>{d}</div>)}
+        {days.map((d, i) => {
+          if (!d) return <div key={`empty-${i}`}></div>;
+          const isActive = activeDays.includes(d);
+          return (
+            <div key={d} style={{ 
+              aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backgroundColor: isActive ? color : 'transparent',
+              color: isActive ? '#FFFFFF' : '#111827',
+              borderRadius: '50%',
+              fontWeight: isActive ? 'bold' : 'normal',
+              fontSize: '1.8cqi',
+              opacity: isActive ? 0.9 : 0.8
+            }}>
+              {d}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
   const [data, setData] = useState<ReportData>(defaultData);
@@ -778,13 +833,35 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
               const sortedMonths = Object.values(monthsData).sort((a, b) => a.month - b.month);
 
+              // Find report month
+              let reportMonth = new Date().getMonth() + 1;
+              let reportYear = new Date().getFullYear();
+              if (data.dateRange) {
+                const dateMatch = data.dateRange.match(/(\d{4})[\/\-](\d{1,2})/);
+                if (dateMatch) {
+                  reportYear = parseInt(dateMatch[1]);
+                  reportMonth = parseInt(dateMatch[2]);
+                } else {
+                  const simpleMatch = data.dateRange.match(/(\d{1,2})[\/\-]\d{1,2}/);
+                  if (simpleMatch) reportMonth = parseInt(simpleMatch[1]);
+                }
+              }
+
               // 2. Build Project Slides Data
               const CHUNK_SIZE = 6; // Reduced from 10 to fit in slide without scrolling
-              const slidesData: { project: Project; tasks: Task[]; part: number; totalParts: number }[] = [];
+              const slidesData: { project: Project; tasks: Task[]; part: number; totalParts: number; activeDays: number[] }[] = [];
               
               data.projects.forEach(project => {
+                const activeDays: number[] = [];
+                project.tasks.forEach(task => {
+                   const dInfo = parseDate(task.description);
+                   if (dInfo && dInfo.month === reportMonth && !activeDays.includes(dInfo.day)) {
+                     activeDays.push(dInfo.day);
+                   }
+                });
+
                 if (project.tasks.length === 0) {
-                  slidesData.push({ project, tasks: [], part: 1, totalParts: 1 });
+                  slidesData.push({ project, tasks: [], part: 1, totalParts: 1, activeDays });
                 } else {
                   const totalParts = Math.ceil(project.tasks.length / CHUNK_SIZE);
                   for (let i = 0; i < project.tasks.length; i += CHUNK_SIZE) {
@@ -792,7 +869,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                       project,
                       tasks: project.tasks.slice(i, i + CHUNK_SIZE),
                       part: Math.floor(i / CHUNK_SIZE) + 1,
-                      totalParts
+                      totalParts,
+                      activeDays
                     });
                   }
                 }
@@ -846,13 +924,18 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
                         </div>
                         
-                        <div className="slide-content" style={{ position: 'relative', zIndex: 1 }}>
-                          <div className="slide-col" style={{ flex: 1, width: '100%' }}>
+                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '4fr 6fr', gap: '4cqi' }}>
+                          
+                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center', paddingRight: '2cqi' }}>
+                            <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} color={projectColor} />
+                          </div>
+
+                          <div className="slide-col" style={{ flex: 1, width: '100%', overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
                             <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: '2.4cqi', marginBottom: '2cqi', color: titleColor }}>
                               <CheckCircle2 size={20} />
                               <span>工作項目</span>
                             </div>
-                            <div className="slide-tasks-container">
+                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '1.5cqi', overflowY: 'hidden' }}>
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '1.8cqi', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map(task => (
                                 <div key={task.id} className="slide-task-card" style={{ backgroundColor: cardBgColor, color: '#FFFFFF', border: 'none' }}>
