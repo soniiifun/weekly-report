@@ -252,6 +252,14 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
   const handleFullscreen = () => {
     setIsWebFullscreen(true);
+    const el = document.documentElement;
+    if (el) {
+      if (el.requestFullscreen) {
+        el.requestFullscreen().catch(e => console.log('Fullscreen error:', e));
+      } else if ((el as any).webkitRequestFullscreen) {
+        (el as any).webkitRequestFullscreen();
+      }
+    }
   };
 
   const handleExportPDF = async () => {
@@ -761,11 +769,11 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-subtitle { font-size: calc(2.5 * var(--cqi-unit)); color: #4B5563; text-align: center; margin-bottom: auto; margin-top: calc(1 * var(--cqi-unit)); }
           .dark .slide-subtitle { color: #9CA3AF; }
 
-          .slide-content { display: flex; flex-direction: row; gap: calc(3 * var(--cqi-unit)); flex: 1; min-height: 0; overflow: hidden; }
+          .slide-content { display: flex; flex-direction: row; gap: calc(3 * var(--cqi-unit)); flex: 1; overflow: hidden; }
           .slide-col { display: flex; flex-direction: column; overflow: hidden; }
           .slide-col-title { font-size: calc(2.8 * var(--cqi-unit)); font-weight: bold; color: #2563EB; margin-bottom: calc(1 * var(--cqi-unit)); display: flex; align-items: center; gap: calc(0.5 * var(--cqi-unit)); }
           .dark .slide-col-title { color: #60A5FA; }
-          .slide-tasks-container { overflow-y: hidden; padding-right: calc(0.5 * var(--cqi-unit)); display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(30 * var(--cqi-unit)), 1fr)); gap: calc(1.5 * var(--cqi-unit)); align-content: start; width: 100%; }
+          .slide-tasks-container { overflow-y: hidden; padding-right: calc(0.5 * var(--cqi-unit)); display: grid; grid-template-columns: 1fr 1fr; gap: calc(1.5 * var(--cqi-unit)); align-content: start; width: 100%; }
           
           .slide-task-card { background: #FFFFFF; border-radius: calc(1.5 * var(--cqi-unit)); padding: calc(2 * var(--cqi-unit)); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); transition: transform 0.2s; }
           .dark .slide-task-card { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.05); box-shadow: none; }
