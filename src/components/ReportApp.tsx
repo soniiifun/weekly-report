@@ -880,7 +880,17 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
               // 2. Build Project Slides Data
               const CHUNK_SIZE = 6; // Reduced from 10 to fit in slide without scrolling
-              const slidesData: { project: Project; tasks: Task[]; part: number; totalParts: number; activeDays: number[]; milestoneDays: number[]; milestoneList: {key: string, label: string, value: string}[] }[] = [];
+              const slidesData: { 
+                project: Project; 
+                tasks: Task[]; 
+                part: number; 
+                totalParts: number; 
+                activeDays: number[]; 
+                milestoneDays: number[]; 
+                milestoneList: {key: string, label: string, value: string}[];
+                slideMonth: number;
+                slideYear: number;
+              }[] = [];
               
               const milestoneLabels: Record<string, string> = {
                 filming: '預計拍片',
@@ -892,42 +902,62 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
               };
 
               data.projects.forEach(project => {
-                const activeDays: number[] = [];
-                const milestoneDays: number[] = [];
-                const milestoneList: {key: string, label: string, value: string}[] = [];
-
-                if (project.milestones) {
-                  Object.entries(project.milestones).forEach(([key, value]) => {
-                    if (value && typeof value === 'string') {
-                      milestoneList.push({ key, label: milestoneLabels[key] || key, value });
-                      const dInfo = parseDate(value);
-                      if (dInfo && dInfo.month === reportMonth && !milestoneDays.includes(dInfo.day)) {
-                        milestoneDays.push(dInfo.day);
-                      }
-                    }
-                  });
-                }
-
-                project.tasks.forEach(task => {
-                   const dInfo = parseDate(task.description);
-                   if (dInfo && dInfo.month === reportMonth && !activeDays.includes(dInfo.day)) {
-                     activeDays.push(dInfo.day);
-                   }
-                });
-
                 if (project.tasks.length === 0) {
-                  slidesData.push({ project, tasks: [], part: 1, totalParts: 1, activeDays, milestoneDays, milestoneList });
+                  const activeDays: number[] = [];
+                  const milestoneDays: number[] = [];
+                  const milestoneList: {key: string, label: string, value: string}[] = [];
+                  if (project.milestones) {
+                    Object.entries(project.milestones).forEach(([key, value]) => {
+                      if (value && typeof value === 'string') {
+                        milestoneList.push({ key, label: milestoneLabels[key] || key, value });
+                        const dInfo = parseDate(value);
+                        if (dInfo && dInfo.month === reportMonth && !milestoneDays.includes(dInfo.day)) {
+                          milestoneDays.push(dInfo.day);
+                        }
+                      }
+                    });
+                  }
+                  slidesData.push({ project, tasks: [], part: 1, totalParts: 1, activeDays, milestoneDays, milestoneList, slideMonth: reportMonth, slideYear: reportYear });
                 } else {
                   const totalParts = Math.ceil(project.tasks.length / CHUNK_SIZE);
                   for (let i = 0; i < project.tasks.length; i += CHUNK_SIZE) {
+                    const partNum = Math.floor(i / CHUNK_SIZE) + 1;
+                    const slideMonth = ((reportMonth + partNum - 2) % 12) + 1;
+                    const slideYear = reportYear + Math.floor((reportMonth + partNum - 2) / 12);
+                    
+                    const partActiveDays: number[] = [];
+                    const partMilestoneDays: number[] = [];
+                    const partMilestoneList: {key: string, label: string, value: string}[] = [];
+                    
+                    if (project.milestones) {
+                      Object.entries(project.milestones).forEach(([key, value]) => {
+                        if (value && typeof value === 'string') {
+                          partMilestoneList.push({ key, label: milestoneLabels[key] || key, value });
+                          const dInfo = parseDate(value);
+                          if (dInfo && dInfo.month === slideMonth && !partMilestoneDays.includes(dInfo.day)) {
+                            partMilestoneDays.push(dInfo.day);
+                          }
+                        }
+                      });
+                    }
+
+                    project.tasks.forEach(task => {
+                       const dInfo = parseDate(task.description);
+                       if (dInfo && dInfo.month === slideMonth && !partActiveDays.includes(dInfo.day)) {
+                         partActiveDays.push(dInfo.day);
+                       }
+                    });
+
                     slidesData.push({
                       project,
                       tasks: project.tasks.slice(i, i + CHUNK_SIZE),
-                      part: Math.floor(i / CHUNK_SIZE) + 1,
+                      part: partNum,
                       totalParts,
-                      activeDays,
-                      milestoneDays,
-                      milestoneList
+                      activeDays: partActiveDays,
+                      milestoneDays: partMilestoneDays,
+                      milestoneList: partMilestoneList,
+                      slideMonth,
+                      slideYear
                     });
                   }
                 }
@@ -984,7 +1014,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: '1cqi', marginLeft: '-2cqi', marginTop: '-2cqi' }}>
                           
                           <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center' }}>
-                            <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
+                            <MiniCalendar year={slideData.slideYear} month={slideData.slideMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
                               <div className="milestones-list" style={{ marginTop: '2cqi', padding: '1.5cqi', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: '0.8cqi', fontSize: '1.4cqi', display: 'flex', flexDirection: 'column', gap: '0.8cqi' }}>
