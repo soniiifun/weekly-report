@@ -884,10 +884,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
 
                           <div className="slide-col" style={{ flex: 1, width: '100%', overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
-                            <div className="slide-col-title" style={{ justifyContent: 'center', fontSize: 'calc(2.4 * var(--cqi-unit))', marginBottom: 'calc(2 * var(--cqi-unit))', color: titleColor }}>
-                              <CheckCircle2 size={20} />
-                              <span>工作項目</span>
-                            </div>
+
                             <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(0.2 * var(--cqi-unit))', overflowY: 'hidden' }}>
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: 'calc(1.8 * var(--cqi-unit))', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map(task => (
