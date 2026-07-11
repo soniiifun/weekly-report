@@ -101,7 +101,7 @@ const MiniCalendar = ({ year, month, activeDays, color }: { year: number, month:
   const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
   
   return (
-    <div className="mini-calendar" style={{ width: '85%', fontSize: '1.5cqi', marginLeft: '-2cqi' }}>
+    <div className="mini-calendar" style={{ width: '85%', fontSize: '1.5cqi', margin: '0' }}>
       <div style={{ fontWeight: 'bold', fontSize: '2.2cqi', marginBottom: '1.2cqi', color: '#111827', textAlign: 'left', paddingLeft: '0.5cqi' }}>
         {month} 月
       </div>
@@ -929,7 +929,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
                         </div>
                         
-                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '4fr 6fr', gap: '4cqi', marginLeft: '-4cqi' }}>
+                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '4fr 6fr', gap: '4cqi', marginLeft: '-2cqi' }}>
                           
                           <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: '2cqi', justifyContent: 'center', paddingRight: '2cqi' }}>
                             <MiniCalendar year={reportYear} month={reportMonth} activeDays={slideData.activeDays} color={projectColor} />
