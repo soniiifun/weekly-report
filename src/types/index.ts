@@ -6,8 +6,12 @@ export interface Contact {
 export interface Task {
   id: string;
   description: string;
-  hasContact: boolean;
-  contact: Contact | null;
+  hasContact?: boolean;
+  link?: string;
+  contact?: {
+    person: string;
+    progress: string;
+  };
 }
 
 export interface Milestones {

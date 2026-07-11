@@ -640,6 +640,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                       onChange={e => updateTask(project.id, task.id, 'description', e.target.value)} 
                     />
 
+                    <label style={{ fontSize: '0.75rem' }}>外部連結 (選填)</label>
+                    <input 
+                      className="input-field" 
+                      style={{ marginBottom: '0.5rem', width: '95%' }} 
+                      value={task.link || ''} 
+                      onChange={e => updateTask(project.id, task.id, 'link', e.target.value)} 
+                      placeholder="例如：https://google.com"
+                    />
+
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                       <input 
                         type="checkbox" 
@@ -1072,7 +1081,15 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                 <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: '0.2cqi 0', boxShadow: 'none', display: 'flex', gap: '1.5cqi', alignItems: 'flex-start' }}>
                                   <div style={{ marginTop: '0.8cqi', width: '1.2cqi', height: '1.2cqi', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0 }}></div>
                                   <div style={{ flex: 1 }}>
-                                    <div className="slide-task-desc" style={{ color: '#1F2937' }}>{task.description || '(未填寫說明)'}</div>
+                                    <div className="slide-task-desc" style={{ color: '#1F2937' }}>
+                                      {task.link ? (
+                                        <a href={task.link} target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6', textDecoration: 'underline' }}>
+                                          {task.description || '(未填寫說明)'}
+                                        </a>
+                                      ) : (
+                                        task.description || '(未填寫說明)'
+                                      )}
+                                    </div>
                                   
                                   {task.hasContact && (
                                     <div className="slide-contact" style={{ backgroundColor: 'transparent', border: 'none', padding: '0 0 0 1cqi', borderLeft: '2px solid rgba(0,0,0,0.1)', color: '#4B5563', gap: '0.2cqi' }}>
