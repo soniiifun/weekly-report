@@ -69,7 +69,7 @@ const getDaysInMonth = (month: number) => {
 
 
 // Morandi Palette
-const PALETTE = ['#38E6EC', '#3B82F6', '#F43F5E', '#10B981', '#EAB308', '#F97316', '#06B6D4'];
+const PALETTE = ['#8EA4C8', '#D18E8E', '#96B49C', '#D8B08A', '#A79EAE', '#7EA8A8', '#C3B49E'];
 
 interface TimelineTask {
   day: number;
@@ -902,7 +902,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         
                         <div className="gantt-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', margin: 'calc(2 * var(--cqi-unit)) calc(4 * var(--cqi-unit))', border: '1px solid #E5E7EB', borderRadius: 'calc(1 * var(--cqi-unit))', overflow: 'hidden', backgroundColor: '#F9FAFB' }}>
                           {/* Gantt Header */}
-                          <div className="gantt-header" style={{ display: 'flex', backgroundColor: '#0284C7', color: 'white' }}>
+                          <div className="gantt-header" style={{ display: 'flex', backgroundColor: '#7B8C9E', color: 'white' }}>
                             <div style={{ width: 'calc(20 * var(--cqi-unit))', flexShrink: 0, padding: 'calc(1 * var(--cqi-unit))', fontWeight: 'bold', fontSize: 'calc(2 * var(--cqi-unit))', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: '2px solid rgba(255,255,255,0.5)' }}>
                               {reportYear} / {monthData.month}
                             </div>
@@ -919,7 +919,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           <div className="gantt-body" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
                             {activeProjects.map((projName, pIdx) => {
                               const proj = data.projects.find(p => p.name === projName);
-                              const color = proj ? projColors[proj.id] : '#38bdf8';
+                              const color = proj ? projColors[proj.id] : '#8EA4C8';
                               const projTasks = monthData.tasks.filter(t => t.project === projName).sort((a, b) => a.day - b.day);
                               
                               const rows: typeof projTasks[] = [];
