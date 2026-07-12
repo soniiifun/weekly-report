@@ -102,7 +102,7 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   
   return (
-    <div className="mini-calendar" style={{ width: '100%', overflow: 'hidden' }}>
+    <div className="mini-calendar" style={{ width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'calc(2 * var(--cqi-unit))' }}>
         <div style={{ color: '#FFFFFF', fontSize: 'calc(2.5 * var(--cqi-unit))', fontWeight: 300, display: 'flex', gap: 'calc(1 * var(--cqi-unit))' }}>
           <span>{month} 月</span> <span>{year}</span>
@@ -113,10 +113,10 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
         </div>
       </div>
       <div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'calc(0.8 * var(--cqi-unit))', textAlign: 'center', marginBottom: 'calc(1.5 * var(--cqi-unit))' }}>
-          {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: '400', fontSize: 'calc(1.2 * var(--cqi-unit))' }}>{d}</div>)}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'calc(0.5 * var(--cqi-unit))', textAlign: 'center', marginBottom: 'calc(1.5 * var(--cqi-unit))' }}>
+          {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: '400', fontSize: 'calc(1 * var(--cqi-unit))' }}>{d}</div>)}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'calc(0.8 * var(--cqi-unit))', textAlign: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'calc(0.5 * var(--cqi-unit))', textAlign: 'center' }}>
           {days.map((d, i) => {
             if (!d) return <div key={`empty-${i}`}></div>;
             const isActive = activeDays.includes(d);
@@ -148,7 +148,7 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
                 color: textColor,
                 borderRadius: '50%',
                 fontWeight: fontWeight,
-                fontSize: 'calc(1.5 * var(--cqi-unit))',
+                fontSize: 'calc(1.3 * var(--cqi-unit))',
                 position: 'relative'
               }}>
                 <span>{d}</span>
@@ -502,7 +502,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slides-container { display: flex; flex-direction: column; gap: 2rem; }
 
           .slide {
-            background-color: #EFECE6;
+            background-color: #f7f7f7;
             border-radius: 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             padding: 0;
@@ -533,7 +533,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-subtitle { font-size: calc(2.5 * var(--cqi-unit)); color: #4B5563; text-align: center; margin-bottom: auto; margin-top: calc(1 * var(--cqi-unit)); }
           .dark .slide-subtitle { color: #9CA3AF; }
 
-          .slide-content { display: grid; grid-template-columns: 38% 62%; gap: 0; flex: 1; height: 100%; overflow: hidden; align-items: stretch; margin: 0; }
+          .slide-content { display: grid; grid-template-columns: 36% 64%; gap: 0; flex: 1; height: 100%; overflow: hidden; align-items: stretch; margin: 0; }
           .slide-col { display: flex; flex-direction: column; overflow: hidden; padding: calc(6 * var(--cqi-unit)) calc(4 * var(--cqi-unit)); }
           .slide-col-title { font-size: calc(2.8 * var(--cqi-unit)); font-weight: bold; color: #4B5563; margin-bottom: calc(1 * var(--cqi-unit)); display: flex; align-items: center; gap: calc(0.5 * var(--cqi-unit)); }
           .dark .slide-col-title { color: #60A5FA; }
@@ -848,7 +848,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 'calc(4 * var(--cqi-unit))', right: 'calc(4 * var(--cqi-unit))', fontSize: 'calc(10 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: '#cbe5eb', zIndex: 2, opacity: 0.9, letterSpacing: 'calc(0.2 * var(--cqi-unit))', pointerEvents: 'none' }}>
+                        <div style={{ position: 'absolute', top: 'calc(4 * var(--cqi-unit))', right: 'calc(4 * var(--cqi-unit))', fontSize: 'calc(10 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: '#8acfdd', zIndex: 2, opacity: 0.9, letterSpacing: 'calc(0.2 * var(--cqi-unit))', pointerEvents: 'none' }}>
                           {projNumberStr}
                         </div>
                         <div className="slide-page-num" style={{ zIndex: 1, color: '#9CA3AF' }}>{pageNum}</div>
@@ -856,7 +856,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         
                         <div className="slide-content" style={{ position: 'relative', zIndex: 1, overflow: 'visible' }}>
                           
-                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(4 * var(--cqi-unit))', justifyContent: 'flex-start', backgroundColor: '#1C232B', padding: 'calc(8 * var(--cqi-unit)) calc(4 * var(--cqi-unit))' }}>
+                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(2 * var(--cqi-unit))', justifyContent: 'flex-start', backgroundColor: '#1C232B', padding: 'calc(4 * var(--cqi-unit)) calc(2.5 * var(--cqi-unit)) calc(2 * var(--cqi-unit)) calc(2.5 * var(--cqi-unit))' }}>
                             <MiniCalendar year={slideData.slideYear} month={slideData.slideMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
