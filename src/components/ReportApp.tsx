@@ -558,26 +558,19 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           
           .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: calc(0.4 * var(--cqi-unit)); background: #E5E7EB; border-radius: calc(1 * var(--cqi-unit)); transform: translateY(-50%); }
           .dark .timeline-line { background: rgba(255,255,255,0.2); }
-          
           .timeline-ticks { position: absolute; top: 50%; left: 0; width: 100%; height: 100%; pointer-events: none; }
           .timeline-tick { position: absolute; top: calc(-1 * var(--cqi-unit)); width: calc(0.2 * var(--cqi-unit)); height: calc(2.4 * var(--cqi-unit)); background: rgba(0,0,0,0.2); }
           .dark .timeline-tick { background: rgba(255,255,255,0.3); }
           
-          .timeline-tick-label { position: absolute; top: calc(2.5 * var(--cqi-unit)); transform: translateX(-50%); font-size: calc(1.6 * var(--cqi-unit)); color: #6B7280; }
-          .dark .timeline-tick-label { color: #9CA3AF; }
-          
-          .timeline-item { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; }
-          
-          .timeline-dot { width: calc(1.8 * var(--cqi-unit)); height: calc(1.8 * var(--cqi-unit)); border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: calc(0.3 * var(--cqi-unit)) solid #FFF; background: currentColor; }
-          .dark .timeline-dot { box-shadow: 0 0 10px currentColor; border-color: #0B132B; }
-          
-          .timeline-label-box { position: absolute; width: calc(22 * var(--cqi-unit)); padding: calc(0.8 * var(--cqi-unit)) calc(1 * var(--cqi-unit)); border-radius: calc(0.6 * var(--cqi-unit)); background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); font-size: calc(1.6 * var(--cqi-unit)); text-align: center; color: #1F2937; word-break: break-all; white-space: normal; }
-          .dark .timeline-label-box { background: rgba(0,0,0,0.6); /* removed backdrop-filter */ border-color: rgba(255,255,255,0.1); box-shadow: none; color: white; }
-          
-          .timeline-label-box.top { bottom: calc(3 * var(--cqi-unit)); }
-          .timeline-label-box.bottom { top: calc(3 * var(--cqi-unit)); }
-          .timeline-proj-name { font-weight: bold; font-size: calc(1.4 * var(--cqi-unit)); margin-bottom: calc(0.2 * var(--cqi-unit)); }
-          
+          .timeline-label-box { position: absolute; width: calc(14 * var(--cqi-unit)); padding: calc(0.5 * var(--cqi-unit)) calc(0.6 * var(--cqi-unit)); border-radius: calc(0.4 * var(--cqi-unit)); background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1); font-size: calc(1 * var(--cqi-unit)); line-height: 1.2; text-align: center; color: #1F2937; word-break: break-word; white-space: normal; }
+          .dark .timeline-label-box { background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.1); box-shadow: none; color: white; }
+
+          .timeline-label-box.layer-0 { bottom: calc(2 * var(--cqi-unit)); }
+          .timeline-label-box.layer-1 { top: calc(2 * var(--cqi-unit)); }
+          .timeline-label-box.layer-2 { bottom: calc(7 * var(--cqi-unit)); }
+          .timeline-label-box.layer-3 { top: calc(7 * var(--cqi-unit)); }
+          .timeline-proj-name { font-weight: bold; font-size: calc(0.9 * var(--cqi-unit)); margin-bottom: calc(0.2 * var(--cqi-unit)); }
+
           .timeline-month-title { font-size: calc(5 * var(--cqi-unit)); font-weight: bold; color: #111827; text-align: center; margin-bottom: calc(2 * var(--cqi-unit)); letter-spacing: calc(0.2 * var(--cqi-unit)); }
           .dark .timeline-month-title { color: white; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
           
@@ -947,28 +940,26 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 5 }}>
                             {(() => {
                               const tasks = [...monthData.tasks].sort((a, b) => a.day - b.day);
-                              let topEdge = -10;
-                              let bottomEdge = -10;
-                              const LABEL_WIDTH = 22; // approx width in %
-                              const GAP = 2; // gap in %
+                              // Collision avoidance logic
+                              const edges = [-10, -10, -10, -10];
+                              const LABEL_WIDTH_PCT = (14 / 72) * 100; // approx width relative to timeline container
+                              const GAP = 1; // gap in %
 
                               return tasks.map((task, i) => {
-                                const isTop = i % 2 === 0;
+                                const layer = i % 4;
                                 const dotPos = (task.day / monthData.days) * 100;
-                                let idealLeftEdge = dotPos - LABEL_WIDTH / 2;
+                                let idealLeftEdge = dotPos - LABEL_WIDTH_PCT / 2;
                                 
-                                if (isTop) {
-                                  if (idealLeftEdge < topEdge) idealLeftEdge = topEdge + GAP;
-                                  topEdge = idealLeftEdge + LABEL_WIDTH;
-                                } else {
-                                  if (idealLeftEdge < bottomEdge) idealLeftEdge = bottomEdge + GAP;
-                                  bottomEdge = idealLeftEdge + LABEL_WIDTH;
-                                }
+                                if (idealLeftEdge < edges[layer]) idealLeftEdge = edges[layer] + GAP;
+                                if (idealLeftEdge + LABEL_WIDTH_PCT > 100) idealLeftEdge = 100 - LABEL_WIDTH_PCT;
+                                if (idealLeftEdge < 0) idealLeftEdge = 0;
                                 
-                                const labelPos = idealLeftEdge + LABEL_WIDTH / 2;
+                                edges[layer] = Math.max(edges[layer], idealLeftEdge + LABEL_WIDTH_PCT);
+                                
+                                const labelPos = idealLeftEdge + LABEL_WIDTH_PCT / 2;
                                 
                                 // Save positions for the next render pass
-                                (task as any)._rendered = { dotPos, labelPos, isTop };
+                                (task as any)._rendered = { dotPos, labelPos, layer };
                                 
                                 return (
                                   <line 
@@ -976,7 +967,12 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                     x1={`${dotPos}%`} 
                                     y1="50%" 
                                     x2={`${labelPos}%`} 
-                                    y2={isTop ? "calc(50% - calc(3.5 * var(--cqi-unit)))" : "calc(50% + calc(3.5 * var(--cqi-unit)))"} 
+                                    y2={
+                                      layer === 0 ? "calc(50% - calc(2.5 * var(--cqi-unit)))" : 
+                                      layer === 1 ? "calc(50% + calc(2.5 * var(--cqi-unit)))" : 
+                                      layer === 2 ? "calc(50% - calc(7.5 * var(--cqi-unit)))" : 
+                                      "calc(50% + calc(7.5 * var(--cqi-unit)))"
+                                    } 
                                     stroke={task.color} 
                                     strokeWidth="calc(0.2 * var(--cqi-unit))" 
                                     strokeDasharray="calc(0.6 * var(--cqi-unit))"
@@ -989,7 +985,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
 
                           {/* Dots & Labels */}
                           {monthData.tasks.map((task) => {
-                            const { dotPos, labelPos, isTop } = (task as any)._rendered;
+                            const { dotPos, labelPos, layer } = (task as any)._rendered;
                             return (
                               <React.Fragment key={task.taskId}>
                                 <div className="timeline-item" style={{ left: `${dotPos}%` }}>
