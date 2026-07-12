@@ -69,7 +69,7 @@ const getDaysInMonth = (month: number) => {
 
 
 // Morandi Palette
-const PALETTE = ['#8C9088', '#9A8B84', '#A89F91', '#D0C8B8', '#7C8084', '#B4AFA7', '#867F77'];
+const PALETTE = ['#F9D276', '#B9E1F5', '#F1A89A', '#A3E4D7', '#D7BDE2', '#F9E79F', '#AED6F1'];
 
 interface TimelineTask {
   day: number;
@@ -98,56 +98,63 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
   for (let i = 0; i < firstDay; i++) days.push(null);
   for (let i = 1; i <= daysInMonth; i++) days.push(i);
   
-  const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   
   return (
-    <div className="mini-calendar" style={{ width: '85%', fontSize: 'calc(1.5 * var(--cqi-unit))', margin: '0' }}>
-      <div style={{ fontWeight: 'bold', fontSize: 'calc(2.2 * var(--cqi-unit))', marginBottom: 'calc(1.2 * var(--cqi-unit))', color: '#111827', textAlign: 'left', paddingLeft: 'calc(0.5 * var(--cqi-unit))' }}>
-        {month} 月
+    <div className="mini-calendar" style={{ width: '100%', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'calc(2 * var(--cqi-unit))' }}>
+        <div style={{ color: '#FFFFFF', fontSize: 'calc(2.5 * var(--cqi-unit))', fontWeight: 300, display: 'flex', gap: 'calc(1 * var(--cqi-unit))' }}>
+          <span>{month} 月</span> <span>{year}</span>
+        </div>
+        <div style={{ display: 'flex', gap: 'calc(1 * var(--cqi-unit))', color: '#9CA3AF' }}>
+          <span style={{ cursor: 'pointer' }}>&lt;</span>
+          <span style={{ cursor: 'pointer' }}>&gt;</span>
+        </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'calc(0.2 * var(--cqi-unit))', textAlign: 'center' }}>
-        {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: 'bold', fontSize: 'calc(1.4 * var(--cqi-unit))' }}>{d}</div>)}
-        {days.map((d, i) => {
-          if (!d) return <div key={`empty-${i}`}></div>;
-          const isActive = activeDays.includes(d);
-          const isMilestone = milestoneDays.includes(d);
-          const isToday = new Date().getFullYear() === year && (new Date().getMonth() + 1) === month && new Date().getDate() === d;
-          
-          let bgColor = 'transparent';
-          let textColor = '#111827';
-          let fontWeight = 'normal';
-          
-          if (isMilestone) {
-            bgColor = '#F59E0B'; // Amber/Orange
-            textColor = '#FFFFFF';
-            fontWeight = 'bold';
-          } else if (isActive) {
-            bgColor = color;
-            textColor = '#FFFFFF';
-            fontWeight = 'bold';
-          } else if (isToday) {
-            textColor = '#EF4444';
-            fontWeight = 'bold';
-          }
+      <div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'calc(1 * var(--cqi-unit))', textAlign: 'center', marginBottom: 'calc(1.5 * var(--cqi-unit))' }}>
+          {weekDays.map(d => <div key={d} style={{ color: '#6B7280', fontWeight: '400', fontSize: 'calc(1.2 * var(--cqi-unit))' }}>{d}</div>)}
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 'calc(1 * var(--cqi-unit))', textAlign: 'center' }}>
+          {days.map((d, i) => {
+            if (!d) return <div key={`empty-${i}`}></div>;
+            const isActive = activeDays.includes(d);
+            const isMilestone = milestoneDays.includes(d);
+            const isToday = new Date().getFullYear() === year && (new Date().getMonth() + 1) === month && new Date().getDate() === d;
+            
+            let bgColor = 'transparent';
+            let textColor = '#D1D5DB';
+            let fontWeight = '400';
+            
+            if (isToday) {
+              bgColor = '#FFFFFF';
+              textColor = '#1C232B';
+              fontWeight = 'bold';
+            } else if (isMilestone) {
+              bgColor = '#F59E0B';
+              textColor = '#FFFFFF';
+              fontWeight = 'bold';
+            } else if (isActive) {
+              bgColor = '#374151';
+              textColor = '#FFFFFF';
+            }
 
-          return (
-            <div key={d} style={{ 
-              aspectRatio: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              backgroundColor: bgColor,
-              color: textColor,
-              borderRadius: '50%',
-              fontWeight: fontWeight,
-              fontSize: 'calc(1.5 * var(--cqi-unit))',
-              opacity: isActive || isMilestone ? 0.9 : 0.8,
-              position: 'relative'
-            }}>
-              <span style={{ position: 'relative', top: isToday ? 'calc(-0.2 * var(--cqi-unit))' : '0' }}>{d}</span>
-              {isToday && (
-                <div style={{ position: 'absolute', bottom: 'calc(0.4 * var(--cqi-unit))', width: 'calc(0.5 * var(--cqi-unit))', height: 'calc(0.5 * var(--cqi-unit))', backgroundColor: (isActive || isMilestone) ? '#FFFFFF' : '#EF4444', borderRadius: '50%' }}></div>
-              )}
-            </div>
-          );
-        })}
+            return (
+              <div key={d} style={{ 
+                aspectRatio: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                backgroundColor: bgColor,
+                color: textColor,
+                borderRadius: '50%',
+                fontWeight: fontWeight,
+                fontSize: 'calc(1.5 * var(--cqi-unit))',
+                position: 'relative'
+              }}>
+                <span>{d}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -494,17 +501,17 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slides-container { display: flex; flex-direction: column; gap: 2rem; }
 
           .slide {
-            background-color: #FFFFFF;
-            border-radius: 1rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-            padding: calc(4 * var(--cqi-unit)) calc(4 * var(--cqi-unit)) calc(1 * var(--cqi-unit)) calc(4 * var(--cqi-unit));
+            background-color: #F5F4F0;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
             aspect-ratio: 16 / 9;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             page-break-after: always;
-            border: calc(3 * var(--cqi-unit)) solid #B2A79D;
+            border: none;
             color: #111827;
             z-index: 1;
           }
@@ -525,8 +532,8 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-subtitle { font-size: calc(2.5 * var(--cqi-unit)); color: #4B5563; text-align: center; margin-bottom: auto; margin-top: calc(1 * var(--cqi-unit)); }
           .dark .slide-subtitle { color: #9CA3AF; }
 
-          .slide-content { display: flex; flex-direction: row; gap: calc(3 * var(--cqi-unit)); flex: 1; overflow: hidden; }
-          .slide-col { display: flex; flex-direction: column; overflow: hidden; }
+          .slide-content { display: grid; grid-template-columns: 35% 65%; gap: 0; flex: 1; height: 100%; overflow: hidden; align-items: stretch; margin: 0; }
+          .slide-col { display: flex; flex-direction: column; overflow: hidden; padding: calc(6 * var(--cqi-unit)) calc(4 * var(--cqi-unit)); }
           .slide-col-title { font-size: calc(2.8 * var(--cqi-unit)); font-weight: bold; color: #4B5563; margin-bottom: calc(1 * var(--cqi-unit)); display: flex; align-items: center; gap: calc(0.5 * var(--cqi-unit)); }
           .dark .slide-col-title { color: #60A5FA; }
           .slide-tasks-container { overflow-y: hidden; padding-right: calc(0.5 * var(--cqi-unit)); display: grid; grid-template-columns: 1fr 1fr; gap: calc(1.5 * var(--cqi-unit)); align-content: start; width: 100%; }
@@ -840,25 +847,12 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 'calc(-1 * var(--cqi-unit))', left: 'calc(0 * var(--cqi-unit))', fontSize: 'calc(15 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: projectColor, filter: 'none', zIndex: 0, opacity: 0.15, letterSpacing: 'calc(-1 * var(--cqi-unit))' }}>
-                          {projNumberStr}
-                        </div>
-                        <div className="slide-page-num" style={{ zIndex: 1 }}>{pageNum}</div>
-                        <div className="slide-watermark" style={{ zIndex: 1 }}>Weekly Report</div>
+                        <div className="slide-page-num" style={{ zIndex: 1, color: '#9CA3AF' }}>{pageNum}</div>
+                        <div className="slide-watermark" style={{ zIndex: 1, color: '#9CA3AF' }}>Weekly Report</div>
                         
-                        <div className="slide-header" style={{ position: 'relative', zIndex: 1, marginTop: 'calc(-3 * var(--cqi-unit))' }}>
-                          <h2 className="slide-title" style={{ color: '#000000', textShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
-                            {slideData.project.name}
-                            {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: 'calc(1 * var(--cqi-unit))' }}>(Part {slideData.part})</span>}
-                          </h2>
-                          <div className="slide-meta" style={{ fontSize: 'calc(2 * var(--cqi-unit))', color: '#6B7280', marginTop: 'calc(1 * var(--cqi-unit))' }}>
-                            {data.employeeName}{data.employeeName && data.department ? ' | ' : ''}{data.department}
-                          </div>
-                        </div>
-                        
-                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '3.5fr 6.5fr', gap: 'calc(1 * var(--cqi-unit))', marginLeft: 'calc(-2 * var(--cqi-unit))', marginTop: 'calc(-2 * var(--cqi-unit))', overflow: 'visible' }}>
+                        <div className="slide-content" style={{ position: 'relative', zIndex: 1, overflow: 'visible' }}>
                           
-                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(2 * var(--cqi-unit))', justifyContent: 'center' }}>
+                          <div className="slide-calendar-col" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(4 * var(--cqi-unit))', justifyContent: 'center', backgroundColor: '#1C232B', padding: 'calc(6 * var(--cqi-unit)) calc(4 * var(--cqi-unit))' }}>
                             <MiniCalendar year={slideData.slideYear} month={slideData.slideMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
@@ -877,14 +871,20 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                           </div>
 
                           <div className="slide-col" style={{ flex: 1, width: '100%', overflowY: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                            <div className="slide-header" style={{ marginBottom: 'calc(4 * var(--cqi-unit))' }}>
+                              <h2 className="slide-title" style={{ color: '#333333', textAlign: 'left', fontSize: 'calc(4.5 * var(--cqi-unit))', fontWeight: 500, margin: 0, lineHeight: 1.2 }}>
+                                {slideData.project.name}
+                                {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: 'calc(1 * var(--cqi-unit))' }}>(Part {slideData.part})</span>}
+                                <div style={{ fontSize: 'calc(2.5 * var(--cqi-unit))', color: '#6B7280', marginTop: 'calc(0.5 * var(--cqi-unit))' }}>Event Agenda</div>
+                              </h2>
+                            </div>
 
-                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: 'calc(0.2 * var(--cqi-unit))', overflowY: 'hidden', marginTop: 'calc(6 * var(--cqi-unit))' }}>
-                              {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: 'calc(1.8 * var(--cqi-unit))', textAlign: 'center', width: '100%' }}>無具體項目</p>}
-                              {slideData.tasks.map(task => (
-                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: 'calc(0.2 * var(--cqi-unit)) 0', boxShadow: 'none', display: 'flex', gap: 'calc(1.5 * var(--cqi-unit))', alignItems: 'flex-start' }}>
-                                  <div style={{ marginTop: 'calc(0.8 * var(--cqi-unit))', width: 'calc(1.2 * var(--cqi-unit))', height: 'calc(1.2 * var(--cqi-unit))', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0 }}></div>
+                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'hidden' }}>
+                              {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '12px', textAlign: 'center', width: '100%' }}>無具體項目</p>}
+                              {slideData.tasks.map((task, idx) => (
+                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: '#F0EFEA', color: '#1F2937', border: '1px solid #E5E4DF', padding: '12px 16px', borderRadius: '8px', boxShadow: 'none', display: 'flex', gap: '16px', alignItems: 'center' }}>
                                   <div style={{ flex: 1 }}>
-                                    <div className="slide-task-desc" style={{ color: '#1F2937' }}>
+                                    <div className="slide-task-desc" style={{ color: '#4B5563', fontSize: '12px', lineHeight: '1.2', fontWeight: 400 }}>
                                       {task.link ? (
                                         <a href={task.link} target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6', textDecoration: 'underline' }}>
                                           {task.description || '(未填寫說明)'}
@@ -895,12 +895,10 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                     </div>
                                   
                                   {task.hasContact && (
-                                    <div className="slide-contact" style={{ backgroundColor: 'transparent', border: 'none', padding: '0 0 0 calc(1 * var(--cqi-unit))', borderLeft: '2px solid rgba(0,0,0,0.1)', color: '#4B5563', gap: 'calc(0.2 * var(--cqi-unit))' }}>
+                                    <div className="slide-contact" style={{ backgroundColor: 'transparent', border: 'none', padding: '0', color: '#9CA3AF', gap: '4px', marginTop: '4px', fontSize: '11px' }}>
                                       <div className="slide-contact-row">
                                         <span><strong>窗口：</strong>{task.contact?.person || '未指定'}</span>
-                                      </div>
-                                      <div className="slide-contact-row" style={{ marginTop: 'calc(0.25 * var(--cqi-unit))' }}>
-                                        <span><strong>進度：</strong>{task.contact?.progress || '無進度說明'}</span>
+                                        <span style={{ marginLeft: '12px' }}><strong>進度：</strong>{task.contact?.progress || '無進度說明'}</span>
                                       </div>
                                     </div>
                                   )}
