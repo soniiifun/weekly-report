@@ -69,7 +69,7 @@ const getDaysInMonth = (month: number) => {
 
 
 // Morandi Palette
-const PALETTE = ['#F9D276', '#B9E1F5', '#F1A89A', '#A3E4D7', '#D7BDE2', '#F9E79F', '#AED6F1'];
+const PALETTE = ['#EAB308', '#3B82F6', '#F43F5E', '#10B981', '#8B5CF6', '#F97316', '#06B6D4'];
 
 interface TimelineTask {
   day: number;
@@ -501,7 +501,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slides-container { display: flex; flex-direction: column; gap: 2rem; }
 
           .slide {
-            background-color: #f9f9f9;
+            background-color: #f5f5f5;
             border-radius: 0;
             box-shadow: none;
             padding: 0;
@@ -847,7 +847,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 'calc(-1 * var(--cqi-unit))', left: 'calc(0 * var(--cqi-unit))', fontSize: 'calc(15 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: '#FFFFFF', filter: 'none', zIndex: 2, opacity: 0.05, letterSpacing: 'calc(-1 * var(--cqi-unit))', pointerEvents: 'none' }}>
+                        <div style={{ position: 'absolute', top: 'calc(3 * var(--cqi-unit))', left: 'calc(4 * var(--cqi-unit))', fontSize: 'calc(8 * var(--cqi-unit))', fontWeight: 800, lineHeight: 1, color: '#FFFFFF', zIndex: 2, opacity: 0.9, letterSpacing: 'calc(0.2 * var(--cqi-unit))', pointerEvents: 'none' }}>
                           {projNumberStr}
                         </div>
                         <div className="slide-page-num" style={{ zIndex: 1, color: '#9CA3AF' }}>{pageNum}</div>
@@ -886,7 +886,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '12px', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map((task, idx) => (
                                 <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: '0', borderRadius: '0', boxShadow: 'none', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0, marginTop: '4px' }}></div>
+                                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0, marginTop: '5px' }}></div>
                                   <div style={{ flex: 1 }}>
                                     <div className="slide-task-desc" style={{ color: '#4B5563', fontSize: '12px', lineHeight: '14pt', fontWeight: 400 }}>
                                       {task.link ? (
