@@ -132,8 +132,8 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
               textColor = '#1C232B';
               fontWeight = 'bold';
             } else if (isMilestone) {
-              bgColor = color;
-              textColor = '#1C232B';
+              bgColor = '#F59E0B';
+              textColor = '#FFFFFF';
               fontWeight = 'bold';
             } else if (isActive) {
               bgColor = color;
@@ -504,7 +504,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide {
             background-color: #EFECE6;
             border-radius: 0;
-            box-shadow: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             padding: 0;
             aspect-ratio: 16 / 9;
             position: relative;
@@ -848,7 +848,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 'calc(4 * var(--cqi-unit))', right: 'calc(4 * var(--cqi-unit))', fontSize: 'calc(10 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: '#D1D5DB', zIndex: 2, opacity: 0.7, letterSpacing: 'calc(0.2 * var(--cqi-unit))', pointerEvents: 'none' }}>
+                        <div style={{ position: 'absolute', top: 'calc(4 * var(--cqi-unit))', right: 'calc(4 * var(--cqi-unit))', fontSize: 'calc(10 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: '#cbe5eb', zIndex: 2, opacity: 0.9, letterSpacing: 'calc(0.2 * var(--cqi-unit))', pointerEvents: 'none' }}>
                           {projNumberStr}
                         </div>
                         <div className="slide-page-num" style={{ zIndex: 1, color: '#9CA3AF' }}>{pageNum}</div>
