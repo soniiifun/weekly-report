@@ -553,32 +553,9 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slide-next-week { background: rgba(0,0,0,0.02); border: calc(0.2 * var(--cqi-unit)) dashed rgba(0,0,0,0.15); border-radius: calc(1.5 * var(--cqi-unit)); padding: calc(2 * var(--cqi-unit)); font-size: calc(2.8 * var(--cqi-unit)); color: #4B5563; white-space: pre-wrap; line-height: 1.7; flex: 1; overflow: hidden; }
           .dark .slide-next-week { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.15); color: #D1D5DB; }
           
-          /* Timeline UI */
-          .timeline-container { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; margin: calc(5 * var(--cqi-unit)) calc(14 * var(--cqi-unit)); }
-          
-          .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: calc(0.4 * var(--cqi-unit)); background: #E5E7EB; border-radius: calc(1 * var(--cqi-unit)); transform: translateY(-50%); }
-          .dark .timeline-line { background: rgba(255,255,255,0.2); }
-          .timeline-ticks { position: absolute; top: 50%; left: 0; width: 100%; height: 100%; pointer-events: none; }
-          .timeline-tick { position: absolute; top: calc(-1 * var(--cqi-unit)); width: calc(0.2 * var(--cqi-unit)); height: calc(2.4 * var(--cqi-unit)); background: rgba(0,0,0,0.2); }
-          .dark .timeline-tick { background: rgba(255,255,255,0.3); }
-          
-          .timeline-label-box { position: absolute; width: calc(14 * var(--cqi-unit)); padding: calc(0.5 * var(--cqi-unit)) calc(0.6 * var(--cqi-unit)); border-radius: calc(0.4 * var(--cqi-unit)); background: rgba(255,255,255,0.95); border: 1px solid rgba(0,0,0,0.1); box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1); font-size: calc(1 * var(--cqi-unit)); line-height: 1.2; text-align: center; color: #1F2937; word-break: break-word; white-space: normal; }
-          .dark .timeline-label-box { background: rgba(0,0,0,0.6); border-color: rgba(255,255,255,0.1); box-shadow: none; color: white; }
-
-          .timeline-label-box.layer-0 { bottom: calc(2 * var(--cqi-unit)); }
-          .timeline-label-box.layer-1 { top: calc(2 * var(--cqi-unit)); }
-          .timeline-label-box.layer-2 { bottom: calc(7 * var(--cqi-unit)); }
-          .timeline-label-box.layer-3 { top: calc(7 * var(--cqi-unit)); }
-          .timeline-proj-name { font-weight: bold; font-size: calc(0.9 * var(--cqi-unit)); margin-bottom: calc(0.2 * var(--cqi-unit)); }
-
+          /* Gantt UI */
           .timeline-month-title { font-size: calc(5 * var(--cqi-unit)); font-weight: bold; color: #111827; text-align: center; margin-bottom: calc(2 * var(--cqi-unit)); letter-spacing: calc(0.2 * var(--cqi-unit)); }
           .dark .timeline-month-title { color: white; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
-          
-          .timeline-legend { display: flex; flex-wrap: wrap; gap: calc(1.5 * var(--cqi-unit)); justify-content: center; margin-top: auto; padding: calc(1.5 * var(--cqi-unit)); background: rgba(0,0,0,0.03); border-radius: calc(1 * var(--cqi-unit)); border: 1px solid rgba(0,0,0,0.05); }
-          .dark .timeline-legend { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
-          
-          .timeline-legend-item { display: flex; align-items: center; gap: calc(0.5 * var(--cqi-unit)); font-size: calc(1.8 * var(--cqi-unit)); }
-          .timeline-legend-dot { width: calc(1.2 * var(--cqi-unit)); height: calc(1.2 * var(--cqi-unit)); border-radius: 50%; }
           
 
 
@@ -923,96 +900,98 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                         <div className="slide-watermark">Weekly Report</div>
                         <div className="timeline-month-title">{monthData.month}月 專案時程總表</div>
                         
-                        <div className="timeline-container">
-                          <div className="timeline-line"></div>
-                          
-                          {/* Ticks */}
-                          <div className="timeline-ticks">
-                            {[1, 5, 10, 15, 20, 25, monthData.days].map(day => (
-                              <div key={day}>
-                                <div className="timeline-tick" style={{ left: `${(day / monthData.days) * 100}%` }}></div>
-                                <div className="timeline-tick-label" style={{ left: `${(day / monthData.days) * 100}%` }}>{day}</div>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* SVG Connecting Lines */}
-                          <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 5 }}>
-                            {(() => {
-                              const tasks = [...monthData.tasks].sort((a, b) => a.day - b.day);
-                              // Collision avoidance logic
-                              const edges = [-10, -10, -10, -10];
-                              const LABEL_WIDTH_PCT = (14 / 72) * 100; // approx width relative to timeline container
-                              const GAP = 1; // gap in %
-
-                              return tasks.map((task, i) => {
-                                const layer = i % 4;
-                                const dotPos = (task.day / monthData.days) * 100;
-                                let idealLeftEdge = dotPos - LABEL_WIDTH_PCT / 2;
-                                
-                                if (idealLeftEdge < edges[layer]) idealLeftEdge = edges[layer] + GAP;
-                                if (idealLeftEdge + LABEL_WIDTH_PCT > 100) idealLeftEdge = 100 - LABEL_WIDTH_PCT;
-                                if (idealLeftEdge < 0) idealLeftEdge = 0;
-                                
-                                edges[layer] = Math.max(edges[layer], idealLeftEdge + LABEL_WIDTH_PCT);
-                                
-                                const labelPos = idealLeftEdge + LABEL_WIDTH_PCT / 2;
-                                
-                                // Save positions for the next render pass
-                                (task as any)._rendered = { dotPos, labelPos, layer };
-                                
-                                return (
-                                  <line 
-                                    key={`line-${task.taskId}`}
-                                    x1={`${dotPos}%`} 
-                                    y1="50%" 
-                                    x2={`${labelPos}%`} 
-                                    y2={
-                                      layer === 0 ? "calc(50% - calc(2.5 * var(--cqi-unit)))" : 
-                                      layer === 1 ? "calc(50% + calc(2.5 * var(--cqi-unit)))" : 
-                                      layer === 2 ? "calc(50% - calc(7.5 * var(--cqi-unit)))" : 
-                                      "calc(50% + calc(7.5 * var(--cqi-unit)))"
-                                    } 
-                                    stroke={task.color} 
-                                    strokeWidth="calc(0.2 * var(--cqi-unit))" 
-                                    strokeDasharray="calc(0.6 * var(--cqi-unit))"
-                                    opacity="0.6"
-                                  />
-                                );
-                              });
-                            })()}
-                          </svg>
-
-                          {/* Dots & Labels */}
-                          {monthData.tasks.map((task) => {
-                            const { dotPos, labelPos, layer } = (task as any)._rendered;
-                            return (
-                              <React.Fragment key={task.taskId}>
-                                <div className="timeline-item" style={{ left: `${dotPos}%` }}>
-                                  <div className="timeline-dot" style={{ color: task.color }}></div>
+                        <div className="gantt-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', margin: 'calc(2 * var(--cqi-unit)) calc(4 * var(--cqi-unit))', border: '1px solid #E5E7EB', borderRadius: 'calc(1 * var(--cqi-unit))', overflow: 'hidden', backgroundColor: '#F9FAFB' }}>
+                          {/* Gantt Header */}
+                          <div className="gantt-header" style={{ display: 'flex', backgroundColor: '#0284C7', color: 'white' }}>
+                            <div style={{ width: 'calc(20 * var(--cqi-unit))', flexShrink: 0, padding: 'calc(1 * var(--cqi-unit))', fontWeight: 'bold', fontSize: 'calc(2 * var(--cqi-unit))', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRight: '2px solid rgba(255,255,255,0.5)' }}>
+                              {reportYear} / {monthData.month}
+                            </div>
+                            <div style={{ flex: 1, display: 'grid', gridTemplateColumns: `repeat(${monthData.days}, 1fr)` }}>
+                              {Array.from({length: monthData.days}, (_, i) => i + 1).map(day => (
+                                <div key={day} style={{ borderRight: '1px solid rgba(255,255,255,0.3)', padding: 'calc(0.5 * var(--cqi-unit)) 0', textAlign: 'center', fontSize: 'calc(1.2 * var(--cqi-unit))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  {day}
                                 </div>
-                                <div className="timeline-item" style={{ left: `${labelPos}%`, zIndex: 11 }}>
-                                  <div className={`timeline-label-box layer-${layer}`} style={{ borderColor: task.color, transform: 'translateX(-50%)', left: '0' }}>
-                                    <div className="timeline-proj-name" style={{ color: task.color }}>{task.project}</div>
-                                    <div>{task.description}</div>
+                              ))}
+                            </div>
+                          </div>
+                          
+                          {/* Gantt Body */}
+                          <div className="gantt-body" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+                            {activeProjects.map((projName, pIdx) => {
+                              const proj = data.projects.find(p => p.name === projName);
+                              const color = proj ? projColors[proj.id] : '#38bdf8';
+                              const projTasks = monthData.tasks.filter(t => t.project === projName).sort((a, b) => a.day - b.day);
+                              
+                              const rows: typeof projTasks[] = [];
+                              projTasks.forEach(task => {
+                                let placed = false;
+                                for (let r of rows) {
+                                  // Task visually occupies roughly 6 days of width.
+                                  // So we require a gap of at least 6 days to place on the same row.
+                                  const overlap = r.some(existing => Math.abs(existing.day - task.day) < 6);
+                                  if (!overlap) {
+                                    r.push(task);
+                                    placed = true;
+                                    break;
+                                  }
+                                }
+                                if (!placed) {
+                                  rows.push([task]);
+                                }
+                              });
+                              if (rows.length === 0) rows.push([]);
+
+                              return (
+                                <div key={projName} className="gantt-row" style={{ display: 'flex', borderBottom: '1px solid #E5E7EB', backgroundColor: pIdx % 2 === 0 ? 'white' : '#F9FAFB', flex: 1 }}>
+                                  <div style={{ width: 'calc(20 * var(--cqi-unit))', flexShrink: 0, backgroundColor: color, color: 'white', padding: 'calc(1 * var(--cqi-unit))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: 'calc(1.5 * var(--cqi-unit))', borderRight: '1px solid #E5E7EB', textAlign: 'center' }}>
+                                    {projName}
+                                  </div>
+                                  
+                                  <div style={{ flex: 1, display: 'grid', gridTemplateColumns: `repeat(${monthData.days}, 1fr)`, position: 'relative' }}>
+                                    {/* Grid Lines */}
+                                    {Array.from({length: monthData.days}, (_, i) => i + 1).map(day => (
+                                      <div key={day} style={{ borderRight: '1px solid #F3F4F6' }}></div>
+                                    ))}
+                                    
+                                    {/* Tasks Container */}
+                                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, padding: 'calc(0.5 * var(--cqi-unit)) 0', display: 'flex', flexDirection: 'column', gap: 'calc(0.5 * var(--cqi-unit))', justifyContent: 'center' }}>
+                                      {rows.map((rowTasks, rIdx) => (
+                                        <div key={rIdx} style={{ position: 'relative', height: 'calc(2 * var(--cqi-unit))' }}>
+                                          {rowTasks.map(task => (
+                                            <div key={task.taskId} style={{ 
+                                              position: 'absolute', 
+                                              left: `calc(${((task.day - 1) / monthData.days) * 100}% + 2px)`,
+                                              width: `calc((100% / ${monthData.days}) * 6)`, 
+                                              maxWidth: `calc(100% - ${((task.day - 1) / monthData.days) * 100}%)`, 
+                                              backgroundColor: color,
+                                              color: 'white',
+                                              padding: '0 calc(0.5 * var(--cqi-unit))',
+                                              borderRadius: 'calc(1 * var(--cqi-unit))',
+                                              fontSize: 'calc(0.8 * var(--cqi-unit))', 
+                                              lineHeight: 'calc(2 * var(--cqi-unit))',
+                                              whiteSpace: 'nowrap',
+                                              overflow: 'hidden',
+                                              textOverflow: 'ellipsis',
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+                                              zIndex: 10
+                                            }}>
+                                              <span style={{ 
+                                                display: 'inline-block', width: 'calc(0.6 * var(--cqi-unit))', height: 'calc(0.6 * var(--cqi-unit))', 
+                                                backgroundColor: 'white', borderRadius: '50%', marginRight: 'calc(0.4 * var(--cqi-unit))', flexShrink: 0
+                                              }}></span>
+                                              {task.description}
+                                            </div>
+                                          ))}
+                                        </div>
+                                      ))}
+                                    </div>
                                   </div>
                                 </div>
-                              </React.Fragment>
-                            );
-                          })}
-                        </div>
-
-                        <div className="timeline-legend">
-                          {activeProjects.map(projName => {
-                            const proj = data.projects.find(p => p.name === projName);
-                            const color = proj ? projColors[proj.id] : '#fff';
-                            return (
-                              <div key={projName} className="timeline-legend-item">
-                                <div className="timeline-legend-dot" style={{ backgroundColor: color }}></div>
-                                <span>{projName}</span>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
+                          </div>
                         </div>
                       </div>
                     );
