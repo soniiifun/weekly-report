@@ -992,7 +992,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                   <div className="timeline-dot" style={{ color: task.color }}></div>
                                 </div>
                                 <div className="timeline-item" style={{ left: `${labelPos}%`, zIndex: 11 }}>
-                                  <div className={`timeline-label-box ${isTop ? 'top' : 'bottom'}`} style={{ borderColor: task.color, transform: 'translateX(-50%)', left: '0' }}>
+                                  <div className={`timeline-label-box layer-${layer}`} style={{ borderColor: task.color, transform: 'translateX(-50%)', left: '0' }}>
                                     <div className="timeline-proj-name" style={{ color: task.color }}>{task.project}</div>
                                     <div>{task.description}</div>
                                   </div>
