@@ -957,33 +957,43 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, padding: 'calc(0.5 * var(--cqi-unit)) 0', display: 'flex', flexDirection: 'column', gap: 'calc(0.5 * var(--cqi-unit))', justifyContent: 'center' }}>
                                       {rows.map((rowTasks, rIdx) => (
                                         <div key={rIdx} style={{ position: 'relative', height: 'calc(2 * var(--cqi-unit))' }}>
-                                          {rowTasks.map(task => (
-                                            <div key={task.taskId} style={{ 
-                                              position: 'absolute', 
-                                              left: `calc(${((task.day - 1) / monthData.days) * 100}% + 2px)`,
-                                              width: `calc((100% / ${monthData.days}) * 6)`, 
-                                              maxWidth: `calc(100% - ${((task.day - 1) / monthData.days) * 100}%)`, 
-                                              backgroundColor: color,
-                                              color: 'white',
-                                              padding: '0 calc(0.5 * var(--cqi-unit))',
-                                              borderRadius: 'calc(1 * var(--cqi-unit))',
-                                              fontSize: 'calc(0.8 * var(--cqi-unit))', 
-                                              lineHeight: 'calc(2 * var(--cqi-unit))',
-                                              whiteSpace: 'nowrap',
-                                              overflow: 'hidden',
-                                              textOverflow: 'ellipsis',
-                                              display: 'flex',
-                                              alignItems: 'center',
-                                              boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
-                                              zIndex: 10
-                                            }}>
-                                              <span style={{ 
-                                                display: 'inline-block', width: 'calc(0.6 * var(--cqi-unit))', height: 'calc(0.6 * var(--cqi-unit))', 
-                                                backgroundColor: 'white', borderRadius: '50%', marginRight: 'calc(0.4 * var(--cqi-unit))', flexShrink: 0
-                                              }}></span>
-                                              {task.description}
-                                            </div>
-                                          ))}
+                                          {rowTasks.map(task => {
+                                            const isNearEnd = task.day > monthData.days - 6;
+                                            const positionStyle: React.CSSProperties = isNearEnd
+                                              ? { right: `calc(${((monthData.days - task.day) / monthData.days) * 100}% + 2px)` }
+                                              : { left: `calc(${((task.day - 1) / monthData.days) * 100}% + 2px)` };
+                                            return (
+                                              <div key={task.taskId} style={{ 
+                                                position: 'absolute', 
+                                                ...positionStyle,
+                                                width: 'max-content', 
+                                                maxWidth: `calc((100% / ${monthData.days}) * 8)`, 
+                                                backgroundColor: color,
+                                                color: 'white',
+                                                padding: '0 calc(0.5 * var(--cqi-unit))',
+                                                borderRadius: 'calc(1 * var(--cqi-unit))',
+                                                fontSize: 'calc(0.8 * var(--cqi-unit))', 
+                                                lineHeight: 'calc(2 * var(--cqi-unit))',
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                display: 'flex',
+                                                flexDirection: isNearEnd ? 'row-reverse' : 'row',
+                                                alignItems: 'center',
+                                                boxShadow: '0 1px 3px rgba(0,0,0,0.15)',
+                                                zIndex: 10
+                                              }}>
+                                                <span style={{ 
+                                                  display: 'inline-block', width: 'calc(0.6 * var(--cqi-unit))', height: 'calc(0.6 * var(--cqi-unit))', 
+                                                  backgroundColor: 'white', borderRadius: '50%', 
+                                                  marginRight: isNearEnd ? 0 : 'calc(0.4 * var(--cqi-unit))',
+                                                  marginLeft: isNearEnd ? 'calc(0.4 * var(--cqi-unit))' : 0,
+                                                  flexShrink: 0
+                                                }}></span>
+                                                {task.description}
+                                              </div>
+                                            );
+                                          })}
                                         </div>
                                       ))}
                                     </div>
