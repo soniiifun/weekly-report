@@ -501,7 +501,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .slides-container { display: flex; flex-direction: column; gap: 2rem; }
 
           .slide {
-            background-color: #F5F4F0;
+            background-color: #f9f9f9;
             border-radius: 0;
             box-shadow: none;
             padding: 0;
@@ -847,6 +847,9 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                     
                     return (
                       <div key={`${slideData.project.id}-${slideData.part}`} className="slide" style={{ position: 'relative' }}>
+                        <div style={{ position: 'absolute', top: 'calc(-1 * var(--cqi-unit))', left: 'calc(0 * var(--cqi-unit))', fontSize: 'calc(15 * var(--cqi-unit))', fontWeight: 900, lineHeight: 1, color: '#FFFFFF', filter: 'none', zIndex: 2, opacity: 0.05, letterSpacing: 'calc(-1 * var(--cqi-unit))', pointerEvents: 'none' }}>
+                          {projNumberStr}
+                        </div>
                         <div className="slide-page-num" style={{ zIndex: 1, color: '#9CA3AF' }}>{pageNum}</div>
                         <div className="slide-watermark" style={{ zIndex: 1, color: '#9CA3AF' }}>Weekly Report</div>
                         
@@ -879,12 +882,13 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                               </h2>
                             </div>
 
-                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '6px', overflowY: 'hidden' }}>
+                            <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '14pt', overflowY: 'hidden' }}>
                               {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '12px', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map((task, idx) => (
-                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: '#F0EFEA', color: '#1F2937', border: '1px solid #E5E4DF', padding: '12px 16px', borderRadius: '8px', boxShadow: 'none', display: 'flex', gap: '16px', alignItems: 'center' }}>
+                                <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: '0', borderRadius: '0', boxShadow: 'none', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0, marginTop: '4px' }}></div>
                                   <div style={{ flex: 1 }}>
-                                    <div className="slide-task-desc" style={{ color: '#4B5563', fontSize: '12px', lineHeight: '1.2', fontWeight: 400 }}>
+                                    <div className="slide-task-desc" style={{ color: '#4B5563', fontSize: '12px', lineHeight: '14pt', fontWeight: 400 }}>
                                       {task.link ? (
                                         <a href={task.link} target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6', textDecoration: 'underline' }}>
                                           {task.description || '(未填寫說明)'}
