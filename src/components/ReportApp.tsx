@@ -132,8 +132,8 @@ const MiniCalendar = ({ year, month, activeDays, milestoneDays = [], color }: { 
               textColor = '#1C232B';
               fontWeight = 'bold';
             } else if (isMilestone) {
-              bgColor = '#F59E0B';
-              textColor = '#FFFFFF';
+              bgColor = '#f9e800';
+              textColor = '#1C232B';
               fontWeight = 'bold';
             } else if (isActive) {
               bgColor = color;
@@ -860,13 +860,13 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                             <MiniCalendar year={slideData.slideYear} month={slideData.slideMonth} activeDays={slideData.activeDays} milestoneDays={slideData.milestoneDays} color={projectColor} />
                             
                             {slideData.milestoneList && slideData.milestoneList.length > 0 && (
-                              <div className="milestones-list" style={{ marginTop: 'calc(-0.5 * var(--cqi-unit))', marginLeft: 'calc(-2 * var(--cqi-unit))', padding: 'calc(1.5 * var(--cqi-unit))', backgroundColor: 'rgba(255,255,255,0.5)', borderRadius: 'calc(0.8 * var(--cqi-unit))', fontSize: 'calc(1.4 * var(--cqi-unit))' }}>
-                                <div style={{ fontWeight: 'bold', color: '#F59E0B', marginBottom: 'calc(1 * var(--cqi-unit))' }}>重要時程</div>
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', columnGap: 'calc(0.5 * var(--cqi-unit))', rowGap: 'calc(0.6 * var(--cqi-unit))' }}>
+                              <div className="milestones-list" style={{ marginTop: 'calc(-0.5 * var(--cqi-unit))', marginLeft: 'calc(-2 * var(--cqi-unit))', padding: 'calc(1.5 * var(--cqi-unit))', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: 'calc(1 * var(--cqi-unit))' }}>
+                                <div style={{ fontWeight: 'bold', color: '#f9e800', marginBottom: 'calc(1 * var(--cqi-unit))' }}>重要時程</div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'calc(0.8 * var(--cqi-unit))', fontSize: 'calc(1.3 * var(--cqi-unit))', color: '#9CA3AF' }}>
                                   {slideData.milestoneList.map((m, idx) => (
-                                    <div key={idx} style={{ display: 'flex', gap: 'calc(0.5 * var(--cqi-unit))', alignItems: 'flex-start' }}>
-                                      <div style={{ width: 'calc(0.8 * var(--cqi-unit))', height: 'calc(0.8 * var(--cqi-unit))', borderRadius: '50%', backgroundColor: '#F59E0B', flexShrink: 0, marginTop: 'calc(0.4 * var(--cqi-unit))' }}></div>
-                                      <span style={{ color: '#4B5563', fontWeight: 'bold', lineHeight: '1.2' }}>{m.label}：{m.value}</span>
+                                    <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 'calc(0.6 * var(--cqi-unit))' }}>
+                                      <div style={{ width: 'calc(0.8 * var(--cqi-unit))', height: 'calc(0.8 * var(--cqi-unit))', borderRadius: '50%', backgroundColor: '#f9e800', flexShrink: 0, marginTop: 'calc(0.4 * var(--cqi-unit))' }}></div>
+                                      <span style={{ lineHeight: '1.2' }}>{m.label}：{m.value}</span>
                                     </div>
                                   ))}
                                 </div>
@@ -879,17 +879,17 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
                               <h2 className="slide-title" style={{ color: '#333333', textAlign: 'left', fontSize: 'calc(4.5 * var(--cqi-unit))', fontWeight: 500, margin: 0, lineHeight: 1.2 }}>
                                 {slideData.project.name}
                                 {slideData.totalParts > 1 && <span style={{ fontSize: '50%', opacity: 0.7, marginLeft: 'calc(1 * var(--cqi-unit))' }}>(Part {slideData.part})</span>}
-                                <div style={{ fontSize: 'calc(2.5 * var(--cqi-unit))', color: '#6B7280', marginTop: 'calc(0.5 * var(--cqi-unit))' }}>Event Agenda</div>
+
                               </h2>
                             </div>
 
                             <div className="slide-tasks-container" style={{ display: 'flex', flexDirection: 'column', gap: '14pt', overflowY: 'hidden' }}>
-                              {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '12px', textAlign: 'center', width: '100%' }}>無具體項目</p>}
+                              {slideData.tasks.length === 0 && <p style={{ color: '#9CA3AF', fontStyle: 'italic', fontSize: '18px', textAlign: 'center', width: '100%' }}>無具體項目</p>}
                               {slideData.tasks.map((task, idx) => (
                                 <div key={task.id} className="slide-task-card" style={{ backgroundColor: 'transparent', color: '#1F2937', border: 'none', padding: '0', borderRadius: '0', boxShadow: 'none', display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
                                   <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: projectColor, flexShrink: 0, marginTop: '5px' }}></div>
                                   <div style={{ flex: 1 }}>
-                                    <div className="slide-task-desc" style={{ color: '#4B5563', fontSize: '12px', lineHeight: '14pt', fontWeight: 400 }}>
+                                    <div className="slide-task-desc" style={{ color: '#4B5563', fontSize: '18px', lineHeight: '14pt', fontWeight: 400 }}>
                                       {task.link ? (
                                         <a href={task.link} target="_blank" rel="noopener noreferrer" style={{ color: '#3B82F6', textDecoration: 'underline' }}>
                                           {task.description || '(未填寫說明)'}
