@@ -554,7 +554,7 @@ export default function ReportApp({ currentUser = 'Guest' }: ReportAppProps) {
           .dark .slide-next-week { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.15); color: #D1D5DB; }
           
           /* Timeline UI */
-          .timeline-container { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; margin: calc(5 * var(--cqi-unit)) 0; }
+          .timeline-container { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; margin: calc(5 * var(--cqi-unit)) calc(14 * var(--cqi-unit)); }
           
           .timeline-line { position: absolute; top: 50%; left: 0; width: 100%; height: calc(0.4 * var(--cqi-unit)); background: #E5E7EB; border-radius: calc(1 * var(--cqi-unit)); transform: translateY(-50%); }
           .dark .timeline-line { background: rgba(255,255,255,0.2); }
