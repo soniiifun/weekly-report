@@ -72,6 +72,22 @@ interface ReportData { employeeName: string; department: string; dateRange: stri
 
     const parsedData = JSON.parse(text);
 
+    // 強制確保每個 task.description 都有加上 [專案名稱] 標籤
+    if (parsedData.projects && Array.isArray(parsedData.projects)) {
+      parsedData.projects.forEach((proj: any) => {
+        const projName = proj.name || '未命名專案';
+        if (proj.tasks && Array.isArray(proj.tasks)) {
+          proj.tasks.forEach((task: any) => {
+            if (task.description && !task.description.startsWith(`[${projName}]`)) {
+              // 移除可能已經存在但不完整的前綴，然後加上正確的
+              const cleanDesc = task.description.replace(new RegExp(`^\\[?${projName}\\]?\\s*`), '');
+              task.description = `[${projName}] ${cleanDesc}`;
+            }
+          });
+        }
+      });
+    }
+
     return NextResponse.json({ success: true, data: parsedData });
   } catch (error: any) {
     console.error('Gemini API Error:', error);
